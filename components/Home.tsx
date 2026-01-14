@@ -272,6 +272,7 @@ export default function Home({ fadeIn }: HomeProps) {
             width={500}
             height={500}
             className="w-[500px] mx-auto"
+            priority
           />
         </div>
       </section>
@@ -339,7 +340,7 @@ export default function Home({ fadeIn }: HomeProps) {
                       width={300}
                       height={288}
                       className="w-full h-72 object-contain bg-gray-50 rounded-xl"
-                      onLoadingComplete={() => handleImageLoad(item.id)}
+                      onLoad={() => handleImageLoad(item.id)}
                       onLoadStart={() => handleImageLoadStart(item.id)}
                       loading="lazy"
                     />
@@ -395,17 +396,96 @@ export default function Home({ fadeIn }: HomeProps) {
                     );
                   }
                   const pageNum = page as number;
+                  const isActive = currentPage === pageNum;
                   return (
                     <button
                       key={pageNum}
                       onClick={() => handlePageClick(pageNum)}
-                      className={`px-3 py-1 rounded-full transition-colors ${
-                        currentPage === pageNum
-                          ? "border border-blue-700 text-blue-700 bg-blue-50"
-                          : "text-gray-500 hover:text-blue-700 hover:bg-gray-50"
+                      className={`relative transition-all duration-300 text-sm ${
+                        isActive
+                          ? "text-blue-700 font-bold scale-110"
+                          : "text-gray-500 hover:text-blue-700 hover:bg-gray-50 rounded-full px-3 py-1"
                       }`}
                     >
-                      {pageNum}
+                      {isActive ? (
+                        <span className="relative inline-flex items-center justify-center w-10 h-10">
+                          {/* Flower SVG Background */}
+                          <svg
+                            className="absolute inset-0 w-full h-full"
+                            viewBox="0 0 100 100"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            {/* Flower petals */}
+                            <circle
+                              cx="50"
+                              cy="20"
+                              r="18"
+                              fill="#93c5fd"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="80"
+                              cy="50"
+                              r="18"
+                              fill="#93c5fd"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="50"
+                              cy="80"
+                              r="18"
+                              fill="#93c5fd"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="20"
+                              cy="50"
+                              r="18"
+                              fill="#93c5fd"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="73"
+                              cy="27"
+                              r="15"
+                              fill="#bfdbfe"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="73"
+                              cy="73"
+                              r="15"
+                              fill="#bfdbfe"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="27"
+                              cy="73"
+                              r="15"
+                              fill="#bfdbfe"
+                              opacity="0.8"
+                            />
+                            <circle
+                              cx="27"
+                              cy="27"
+                              r="15"
+                              fill="#bfdbfe"
+                              opacity="0.8"
+                            />
+                            {/* Center circle */}
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="26"
+                              fill="#3b82f6"
+                              opacity="0.9"
+                            />
+                          </svg>
+                          <span className="relative z-10">{pageNum}</span>
+                        </span>
+                      ) : (
+                        pageNum
+                      )}
                     </button>
                   );
                 })}
@@ -529,7 +609,7 @@ export default function Home({ fadeIn }: HomeProps) {
                         width={600}
                         height={600}
                         className="w-full h-full object-contain"
-                        onLoadingComplete={() => setModalImageLoading(false)}
+                        onLoad={() => setModalImageLoading(false)}
                         priority
                       />
 
@@ -659,7 +739,6 @@ export default function Home({ fadeIn }: HomeProps) {
                       rel="noopener noreferrer"
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-colors flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
                     >
-                      {/* <span>💬</span> */}
                       <span>Pesan via WhatsApp</span>
                     </a>
 
