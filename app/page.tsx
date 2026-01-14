@@ -3,14 +3,17 @@
 import { useState, useEffect } from "react";
 import Lottie from "lottie-react";
 import loadingAnimation from "@/public/assets/loading.json";
+import HomeComponent from "@/components/Home";
 
-export default function Home() {
+export default function Page() {
   const [loading, setLoading] = useState(true);
+  const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
     // Simulasi loading selama 2 detik
     const timer = setTimeout(() => {
       setLoading(false);
+      setTimeout(() => setFadeIn(true), 50);
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -26,16 +29,5 @@ export default function Home() {
     );
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-white dark:bg-black">
-      <main className="flex flex-col items-center justify-center gap-8">
-        <h1 className="text-6xl font-bold tracking-tight text-black dark:text-white">
-          oursee
-        </h1>
-        <p className="text-xl text-zinc-600 dark:text-zinc-400">
-          Welcome to oursee
-        </p>
-      </main>
-    </div>
-  );
+  return <HomeComponent fadeIn={fadeIn} />;
 }

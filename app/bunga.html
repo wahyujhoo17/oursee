@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bunga Monokrom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: "#000000",
+            },
+            fontFamily: {
+              jakarta: ['"Plus Jakarta Sans"', "sans-serif"],
+              serif: ["Playfair Display", "serif"],
+              citadel: ["Citadel Script Std", "cursive"],
+            },
+          },
+        },
+      };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      @font-face {
+        font-family: "Citadel Script Std";
+        src: url("/fonts/CitadelScriptStd-Regular.otf") format("opentype");
+        font-weight: 400;
+        font-style: normal;
+      }
+    </style>
+  </head>
+  <body class="font-jakarta bg-white text-gray-900">
+    <header class="sticky top-0 bg-white/90 backdrop-blur z-50 border-b">
+      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <nav class="hidden md:flex gap-8 text-sm tracking-wide text-gray-800">
+          <a href="#home" class="hover:text-black">Home</a>
+
+          <div class="relative group">
+            <button class="flex items-center gap-1 hover:text-black">
+              Flower by Occasions
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="absolute left-0 mt-2 w-48 bg-white border rounded-xl shadow-lg hidden group-hover:block">
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Anniversary</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Birthday</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Graduation</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Wedding</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Valentine's Series</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Mothers Day</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Sympathy</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Grand Opening</a>
+            </div>
+          </div>
+
+          <div class="relative group">
+            <button class="flex items-center gap-1 hover:text-black">
+              All Flower Catalogue
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="absolute left-0 mt-2 w-48 bg-white border rounded-xl shadow-lg hidden group-hover:block">
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Hand Bouquets</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Flower Box</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Standing Flowers</a>
+              <a href="#" class="block px-4 py-2 hover:bg-gray-100">Table Flowers</a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="flex-shrink-0 text-center">
+          <a href="#">
+            <img src="assets/logo.png" alt="Logo" class="h-14 mx-auto" />
+          </a>
+        </div>
+
+        <nav class="hidden md:flex gap-8 text-sm tracking-wide text-gray-800 items-center">
+          <a href="#style" class="hover:text-black">Style & decor</a>
+          <a href="#event" class="hover:text-black">Our event & activity</a>
+          <a href="#contact" class="hover:text-black">Contact</a>
+          <a href="#order" class="px-4 py-2 border border-black text-black rounded-full text-sm hover:bg-black hover:text-white transition">Pesan</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="bg-white pt-24 pb-16">
+      <div class="max-w-4xl mx-auto px-6 text-center text-black">
+        <h1 class="text-3xl md:text-5xl font-serif font-bold leading-snug space-y-1">
+          <span class="block">
+            TRANSFORMING
+            <span class="font-citadel italic text-blue-600 font-normal">Floral Dreams</span>
+          </span>
+          <span class="block">INTO LUXURIOUS REALITY</span>
+          <span class="block">
+            FOR
+            <span class="font-citadel italic text-blue-600 font-normal">Unforgettable</span>
+          </span>
+          <span class="block">WEDDINGS & EVENTS</span>
+        </h1>
+
+        <p class="mt-6 text-base text-gray-600">Elegantly curated floral experiences designed to captivate and inspire.</p>
+
+        <div class="mt-8">
+          <a href="#produk" class="px-6 py-3 bg-blue-700 hover:bg-blue-800 transition text-white font-semibold rounded-full"> Discover More </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white">
+      <div class="max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <h1 class="text-4xl md:text-5xl leading-snug">
+            <span class="font-citadel text-gray-700">Elevating</span>
+            <span class="font-serif text-blue-600 font-bold">YOUR</span><br />
+            <span class="font-serif text-blue-600 font-bold">EVENTS WITH</span><br />
+            <span class="font-citadel text-gray-700">Bespoke</span>
+            <span class="font-serif text-blue-600 font-bold">FLORAL</span><br />
+            <span class="font-serif text-blue-600 font-bold">DESIGN</span>
+          </h1>
+
+          <p class="mt-4 text-gray-600">Desain bunga artistik yang disesuaikan untuk setiap acara spesial Anda.</p>
+
+          <div class="mt-6 flex gap-4">
+            <a href="#produk" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:opacity-80 transition">Lihat Koleksi</a>
+            <a href="#order" class="px-6 py-3 border border-black text-black rounded-lg font-semibold hover:bg-black hover:text-white transition">Pesan</a>
+          </div>
+        </div>
+        <img src="assets/oursee.png" alt="Bunga monokrom" class="w-[500px] mx-auto" />
+      </div>
+    </section>
+
+    <section id="produk" class="bg-white py-16">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-12 text-center">
+          <h2 class="text-4xl md:text-6xl font-serif font-bold text-black inline-block tracking-wide">
+            New
+            <span class="font-citadel italic font-normal text-blue-700">Product</span>
+          </h2>
+
+          <div class="mt-4">
+            <a href="#all-products" class="px-5 py-1.5 border border-blue-700 text-blue-700 text-sm rounded-full hover:bg-blue-700 hover:text-white transition"> see all </a>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+          <div>
+            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93" alt="Amora" class="w-full h-72 object-cover" />
+            <h3 class="mt-4 font-semibold text-lg text-gray-900">Amora</h3>
+            <p class="text-gray-600">Rp 1.050.000</p>
+            <a href="#order" class="mt-3 inline-block px-5 py-2 border border-blue-700 text-blue-700 rounded-full hover:bg-blue-700 hover:text-white transition"> Add to bag </a>
+          </div>
+          <div>
+            <img src="https://images.unsplash.com/photo-1522336572468-97b06e8ef143" alt="Fairy" class="w-full h-72 object-cover" />
+            <h3 class="mt-4 font-semibold text-lg text-gray-900">Fairy</h3>
+            <p class="text-gray-600">Rp 250.000</p>
+            <a href="#order" class="mt-3 inline-block px-5 py-2 border border-blue-700 text-blue-700 rounded-full hover:bg-blue-700 hover:text-white transition"> Add to bag </a>
+          </div>
+          <div>
+            <img src="https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6" alt="Genevieve" class="w-full h-72 object-cover" />
+            <h3 class="mt-4 font-semibold text-lg text-gray-900">Genevieve</h3>
+            <p class="text-gray-600">Rp 760.000</p>
+            <a href="#order" class="mt-3 inline-block px-5 py-2 border border-blue-700 text-blue-700 rounded-full hover:bg-blue-700 hover:text-white transition"> Add to bag </a>
+          </div>
+          <div>
+            <img src="https://images.unsplash.com/photo-1526045478516-99145907023c" alt="Standing Bouquet" class="w-full h-72 object-cover" />
+            <h3 class="mt-4 font-semibold text-lg text-gray-900">Standing Bouquet – Fresh Flower</h3>
+            <p class="text-gray-600">Rp 2.550.000</p>
+            <a href="#order" class="mt-3 inline-block px-5 py-2 border border-blue-700 text-blue-700 rounded-full hover:bg-blue-700 hover:text-white transition"> Add to bag </a>
+          </div>
+        </div>
+        <div class="flex justify-center items-center gap-3 mt-12">
+          <button class="p-2 text-gray-500 hover:text-blue-700">&lt;</button>
+          <span class="px-3 py-1 border border-blue-700 text-blue-700 rounded-full">1</span>
+          <span class="px-3 py-1 text-gray-500">2</span>
+          <span class="px-3 py-1 text-gray-500">3</span>
+          <span class="px-3 py-1 text-gray-500">4</span>
+          <button class="p-2 text-gray-500 hover:text-blue-700">&gt;</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="info" class="bg-gray-50 py-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-4xl md:text-6xl font-serif font-bold text-black text-center mb-16">
+          Our
+          <span class="font-citadel italic font-normal text-blue-700">Location</span>
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+          <div class="w-full h-96">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.3123456789!2d112.7500!3d-7.2500!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7f9c123456789%3A0xabcdef123456789!2sKarang%20Empat%20IX%20No.34%2C%20Surabaya!5e0!3m2!1sid!2sid!4v1700000000000"
+              width="100%"
+              height="100%"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              class="rounded-xl"
+            >
+            </iframe>
+          </div>
+
+          <div class="bg-white border-2 border-blue-600 rounded-xl p-10 text-center">
+            <p class="text-blue-700 text-2xl font-bold leading-relaxed mb-4">BUKET BUNGA & SESERAHAN OURSEE.CO</p>
+            <p class="text-gray-700 text-lg leading-relaxed">
+              Karang Empat IX No.34 <br />
+              Surabaya, Indonesia
+            </p>
+            <p class="text-lg">
+              <a href="https://wa.me/6285732286669?text=Halo%20Oursee.co,%20saya%20ingin%20memesan%20buket%20bunga." target="_blank" class="text-red-800 hover:underline font-medium"> 0857-3228-6669 </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-10">
+      <div class="max-w-7xl mx-auto px-6 text-center">
+        <p class="text-sm">&copy; 2025 Bunga Monokrom. All Rights Reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
