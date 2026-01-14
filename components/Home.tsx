@@ -659,7 +659,7 @@ export default function Home({ fadeIn }: HomeProps) {
                       rel="noopener noreferrer"
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-colors flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
                     >
-                      <span>💬</span>
+                      {/* <span>💬</span> */}
                       <span>Pesan via WhatsApp</span>
                     </a>
 
