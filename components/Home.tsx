@@ -26,7 +26,7 @@ export default function Home({ fadeIn }: HomeProps) {
     [key: string]: boolean;
   }>({});
   const [selectedProduct, setSelectedProduct] = useState<CatalogItem | null>(
-    null
+    null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -305,7 +305,7 @@ export default function Home({ fadeIn }: HomeProps) {
 
               // Extract price from caption
               const priceMatch = item.caption.match(
-                /💰HARGA DISKON: ([0-9.,]+)💰|Harga Normal: ([0-9.,]+)/
+                /💰HARGA DISKON: ([0-9.,]+)💰|Harga Normal: ([0-9.,]+)/,
               );
               const price = priceMatch
                 ? priceMatch[1] || priceMatch[2]
@@ -685,7 +685,7 @@ export default function Home({ fadeIn }: HomeProps) {
                     <div className="text-3xl font-bold text-blue-600 mb-6">
                       {(() => {
                         const priceMatch = selectedProduct.caption.match(
-                          /💰HARGA DISKON: ([0-9.,]+)💰|Harga Normal: ([0-9.,]+)/
+                          /💰HARGA DISKON: ([0-9.,]+)💰|Harga Normal: ([0-9.,]+)/,
                         );
                         const price = priceMatch
                           ? priceMatch[1] || priceMatch[2]
@@ -699,14 +699,14 @@ export default function Home({ fadeIn }: HomeProps) {
                       <div className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
                         {processDescription(
                           selectedProduct.caption,
-                          showFullDescription
+                          showFullDescription,
                         )}
                       </div>
 
                       {!showFullDescription &&
                         processDescription(
                           selectedProduct.caption,
-                          false
+                          false,
                         ).includes("...") && (
                           <button
                             onClick={() => setShowFullDescription(true)}
@@ -733,7 +733,7 @@ export default function Home({ fadeIn }: HomeProps) {
                       href={`https://wa.me/6285732286669?text=Halo%20Oursee,%20saya%20ingin%20memesan%20${encodeURIComponent(
                         selectedProduct.caption
                           .split("\n")[0]
-                          .replace("Katalog: ", "")
+                          .replace("Katalog: ", ""),
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
