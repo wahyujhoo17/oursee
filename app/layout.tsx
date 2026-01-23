@@ -5,6 +5,8 @@ import {
   Great_Vibes,
 } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
+import "@uploadthing/react/styles.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -55,6 +57,7 @@ export default function RootLayout({
         className={`${jakartaSans.variable} ${playfairDisplay.variable} ${greatVibes.variable} antialiased`}
       >
         {children}
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

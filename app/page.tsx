@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import HomeComponent from "@/components/Home";
 import Lottie from "lottie-react";
 import loadingAnimation from "@/public/assets/loading.json";
-import HomeComponent from "@/components/Home";
 
 export default function Page() {
   const [loading, setLoading] = useState(true);
@@ -21,8 +21,8 @@ export default function Page() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-black">
-        <div className="w-64 h-64">
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
           <Lottie animationData={loadingAnimation} loop={true} />
         </div>
       </div>

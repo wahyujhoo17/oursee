@@ -2,42 +2,75 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
-import catalogData from "@/public/data/catalog.json";
+import Lottie from "lottie-react";
 import loadingAnimation from "@/public/assets/loading.json";
-
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface HomeProps {
   fadeIn: boolean;
 }
 
-interface CatalogItem {
+interface ProductImage {
   id: string;
-  caption: string;
-  displayUrl: string;
-  images: string[];
+  imageUrl: string;
+  isMain: boolean;
+  order: number;
+}
+
+interface Category {
+  id: string;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
+
+interface Product {
+  id: string;
+  productCode: string;
+  name: string;
+  description: string | null;
+  price: number | null;
+  images: ProductImage[];
+  categories: Category[];
 }
 
 export default function Home({ fadeIn }: HomeProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [loadingImages, setLoadingImages] = useState<{
     [key: string]: boolean;
   }>({});
-  const [selectedProduct, setSelectedProduct] = useState<CatalogItem | null>(
-    null,
-  );
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [modalImageLoading, setModalImageLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const itemsPerPage = 4;
-  const totalPages = Math.ceil(catalogData.length / itemsPerPage);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products?limit=1000");
+      const data = await res.json();
+      setProducts(data.data || data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentProducts = catalogData.slice(startIndex, endIndex);
+  const currentProducts = products.slice(startIndex, endIndex);
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -57,7 +90,7 @@ export default function Home({ fadeIn }: HomeProps) {
     }
   };
 
-  const openModal = (product: CatalogItem) => {
+  const openModal = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
     setModalImageLoading(true);
@@ -297,82 +330,102 @@ export default function Home({ fadeIn }: HomeProps) {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            {currentProducts.map((item: CatalogItem) => {
-              // Extract product name from caption (first line before \n)
-              const productName = item.caption
-                .split("\n")[0]
-                .replace("Katalog: ", "");
+            {loading ? (
+              <div className="col-span-4 text-center py-12">
+                <p className="text-gray-600">Loading products...</p>
+              </div>
+            ) : currentProducts.length === 0 ? (
+              <div className="col-span-4 text-center py-12">
+                <p className="text-gray-600">No products available</p>
+              </div>
+            ) : (
+              currentProducts.map((item: Product) => {
+                const mainImage =
+                  item.images.find((img) => img.isMain) || item.images[0];
+                const isLoading = loadingImages[item.id] !== false;
 
-              // Extract price from caption
-              const priceMatch = item.caption.match(
-                /💰HARGA DISKON: ([0-9.,]+)💰|Harga Normal: ([0-9.,]+)/,
-              );
-              const price = priceMatch
-                ? priceMatch[1] || priceMatch[2]
-                : "Hubungi kami";
-
-              const isLoading = loadingImages[item.id] !== false;
-
-              return (
-                <div
-                  key={item.id}
-                  className="relative cursor-pointer rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 p-4"
-                  onClick={() => openModal(item)}
-                >
-                  {/* Skeleton Loader */}
-                  {isLoading && (
-                    <div className="absolute inset-0 w-full h-72 bg-gray-100 animate-pulse flex items-center justify-center rounded-xl">
-                      <div className="w-32 h-32">
-                        <Lottie animationData={loadingAnimation} loop={true} />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Image */}
+                return (
                   <div
-                    className={`transition-opacity duration-300 rounded-xl overflow-hidden ${
-                      isLoading ? "opacity-0" : "opacity-100"
-                    }`}
+                    key={item.id}
+                    className="relative cursor-pointer rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 p-4"
+                    onClick={() => openModal(item)}
                   >
-                    <Image
-                      src={item.displayUrl}
-                      alt={productName}
-                      width={300}
-                      height={288}
-                      className="w-full h-72 object-contain bg-gray-50 rounded-xl"
-                      onLoad={() => handleImageLoad(item.id)}
-                      onLoadStart={() => handleImageLoadStart(item.id)}
-                      loading="lazy"
-                    />
-                  </div>
+                    {/* Skeleton Loader */}
+                    {isLoading && (
+                      <div className="absolute inset-0 w-full h-72 bg-gray-100 animate-pulse flex items-center justify-center rounded-xl">
+                        <div className="text-gray-400">Loading...</div>
+                      </div>
+                    )}
 
-                  {/* Product Info with Skeleton */}
-                  {isLoading ? (
-                    <div className="mt-4 space-y-3">
-                      <div className="h-6 bg-gray-200 rounded animate-pulse mx-auto w-3/4"></div>
-                      <div className="h-5 bg-gray-200 rounded animate-pulse mx-auto w-1/2"></div>
-                      <div className="h-10 bg-gray-200 rounded-full animate-pulse mx-auto w-32"></div>
+                    {/* Image */}
+                    <div
+                      className={`transition-opacity duration-300 rounded-xl overflow-hidden ${
+                        isLoading ? "opacity-0" : "opacity-100"
+                      }`}
+                    >
+                      {mainImage && (
+                        <Image
+                          src={mainImage.imageUrl}
+                          alt={item.name}
+                          width={300}
+                          height={288}
+                          className="w-full h-72 object-contain bg-gray-50 rounded-xl"
+                          onLoad={() => handleImageLoad(item.id)}
+                          onLoadStart={() => handleImageLoadStart(item.id)}
+                          loading="lazy"
+                        />
+                      )}
                     </div>
-                  ) : (
-                    <>
-                      <h3 className="mt-4 font-semibold text-lg text-gray-900">
-                        {productName}
-                      </h3>
-                      <p className="text-gray-600">
-                        {price !== "Hubungi kami" ? `Rp ${price}` : price}
-                      </p>
-                      <a
-                        href="#order"
-                        className="mt-3 inline-block px-5 py-2 border border-blue-700 text-blue-700 rounded-full hover:bg-blue-700 hover:text-white transition"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Add to bag
-                      </a>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+
+                    {/* Product Info with Skeleton */}
+                    {isLoading ? (
+                      <div className="mt-4 space-y-3">
+                        <div className="h-6 bg-gray-200 rounded animate-pulse mx-auto w-3/4"></div>
+                        <div className="h-5 bg-gray-200 rounded animate-pulse mx-auto w-1/2"></div>
+                        <div className="h-10 bg-gray-200 rounded-full animate-pulse mx-auto w-32"></div>
+                      </div>
+                    ) : (
+                      <>
+                        <h3 className="mt-4 font-semibold text-lg text-gray-900">
+                          {item.name}
+                        </h3>
+                        {item.description && (
+                          <p className="mt-2 text-xs text-gray-500 line-clamp-2 px-2">
+                            {item.description.length > 80
+                              ? item.description.substring(0, 80) + "..."
+                              : item.description}
+                          </p>
+                        )}
+                        {item.categories.length > 0 && (
+                          <div className="flex flex-wrap gap-1 justify-center mt-2">
+                            {item.categories.slice(0, 2).map((pc) => (
+                              <span
+                                key={pc.id}
+                                className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] rounded-full border border-blue-200"
+                              >
+                                {pc.category.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="text-gray-600 mt-2">
+                          {item.price
+                            ? `Rp ${item.price.toLocaleString()}`
+                            : "Hubungi kami"}
+                        </p>
+                        <a
+                          href="#order"
+                          className="mt-3 inline-block px-5 py-2 border border-blue-700 text-blue-700 rounded-full hover:bg-blue-700 hover:text-white transition"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Add to bag
+                        </a>
+                      </>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </div>
           {totalPages > 1 && (
             <>
@@ -596,22 +649,19 @@ export default function Home({ fadeIn }: HomeProps) {
                           </div>
                         </div>
                       )}
-                      <Image
-                        src={
-                          selectedProduct.images &&
-                          selectedProduct.images.length > 0
-                            ? selectedProduct.images[currentImageIndex]
-                            : selectedProduct.displayUrl
-                        }
-                        alt={selectedProduct.caption
-                          .split("\n")[0]
-                          .replace("Katalog: ", "")}
-                        width={600}
-                        height={600}
-                        className="w-full h-full object-contain"
-                        onLoad={() => setModalImageLoading(false)}
-                        priority
-                      />
+                      {selectedProduct.images &&
+                        selectedProduct.images.length > 0 && (
+                          <Image
+                            src={
+                              selectedProduct.images[currentImageIndex].imageUrl
+                            }
+                            alt={selectedProduct.name}
+                            width={600}
+                            height={600}
+                            className="w-full h-full object-contain"
+                            onLoad={() => setModalImageLoading(false)}
+                          />
+                        )}
 
                       {/* Navigation Buttons */}
                       {selectedProduct.images &&
@@ -659,7 +709,7 @@ export default function Home({ fadeIn }: HomeProps) {
                               }`}
                             >
                               <Image
-                                src={image}
+                                src={image.imageUrl}
                                 alt={`Product view ${index + 1}`}
                                 width={120}
                                 height={120}
@@ -675,66 +725,69 @@ export default function Home({ fadeIn }: HomeProps) {
                 {/* Product Details */}
                 <div className="p-8 space-y-6">
                   <div>
-                    <h3 className="text-4xl font-serif font-bold text-gray-900 mb-3 leading-tight">
-                      {selectedProduct.caption
-                        .split("\n")[0]
-                        .replace("Katalog: ", "")}
+                    <h3 className="text-4xl font-serif font-bold text-gray-900 mb-6 leading-tight">
+                      {selectedProduct.name}
                     </h3>
+
+                    {selectedProduct.categories &&
+                      selectedProduct.categories.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-6">
+                          {selectedProduct.categories.map((pc) => (
+                            <span
+                              key={pc.id}
+                              className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full"
+                            >
+                              {pc.category.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
 
                     {/* Price */}
                     <div className="text-3xl font-bold text-blue-600 mb-6">
-                      {(() => {
-                        const priceMatch = selectedProduct.caption.match(
-                          /💰HARGA DISKON: ([0-9.,]+)💰|Harga Normal: ([0-9.,]+)/,
-                        );
-                        const price = priceMatch
-                          ? priceMatch[1] || priceMatch[2]
-                          : "Hubungi kami";
-                        return price !== "Hubungi kami" ? `Rp ${price}` : price;
-                      })()}
+                      {selectedProduct.price
+                        ? `Rp ${selectedProduct.price.toLocaleString()}`
+                        : "Hubungi kami"}
                     </div>
 
                     {/* Description */}
-                    <div className="space-y-4">
-                      <div className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
-                        {processDescription(
-                          selectedProduct.caption,
-                          showFullDescription,
-                        )}
-                      </div>
+                    {selectedProduct.description && (
+                      <div className="space-y-4">
+                        <div className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                          {showFullDescription
+                            ? selectedProduct.description
+                            : selectedProduct.description.length > 150
+                              ? selectedProduct.description.substring(0, 150) +
+                                "..."
+                              : selectedProduct.description}
+                        </div>
 
-                      {!showFullDescription &&
-                        processDescription(
-                          selectedProduct.caption,
-                          false,
-                        ).includes("...") && (
+                        {selectedProduct.description.length > 150 &&
+                          !showFullDescription && (
+                            <button
+                              onClick={() => setShowFullDescription(true)}
+                              className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
+                            >
+                              Lihat semua deskripsi
+                            </button>
+                          )}
+
+                        {showFullDescription && (
                           <button
-                            onClick={() => setShowFullDescription(true)}
-                            className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
+                            onClick={() => setShowFullDescription(false)}
+                            className="text-gray-500 hover:text-gray-600 font-medium hover:underline transition-colors"
                           >
-                            Lihat semua deskripsi
+                            Sembunyikan deskripsi
                           </button>
                         )}
-
-                      {showFullDescription && (
-                        <button
-                          onClick={() => setShowFullDescription(false)}
-                          className="text-gray-500 hover:text-gray-600 font-medium hover:underline transition-colors"
-                        >
-                          Sembunyikan deskripsi
-                        </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Action Buttons */}
                   <div className="space-y-4 pt-6 border-t border-gray-100">
                     <a
-                      href={`https://wa.me/6285732286669?text=Halo%20Oursee,%20saya%20ingin%20memesan%20${encodeURIComponent(
-                        selectedProduct.caption
-                          .split("\n")[0]
-                          .replace("Katalog: ", ""),
-                      )}`}
+                      href={`https://wa.me/6285732286669?text=Halo%20Oursee,%20saya%20ingin%20memesan%20${encodeURIComponent(selectedProduct.name)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-8 rounded-xl font-semibold text-lg transition-colors flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
