@@ -93,10 +93,14 @@ async function compressImageBrowser(file: File): Promise<File> {
               }
 
               if (blob.size <= MAX_SIZE_BYTES || quality <= 0.1) {
-                const compressedFile = new File([blob], file.name, {
-                  type: "image/jpeg",
-                  lastModified: Date.now(),
-                });
+                const compressedFile = new File(
+                  [blob],
+                  file.name.replace(/\.[^.]+$/, ".webp"),
+                  {
+                    type: "image/webp",
+                    lastModified: Date.now(),
+                  },
+                );
 
                 const originalSizeKB = (file.size / 1024).toFixed(2);
                 const compressedSizeKB = (compressedFile.size / 1024).toFixed(
@@ -112,7 +116,7 @@ async function compressImageBrowser(file: File): Promise<File> {
                 tryCompress();
               }
             },
-            "image/jpeg",
+            "image/webp",
             quality,
           );
         };

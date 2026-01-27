@@ -25,9 +25,7 @@ export async function compressImage(file: File): Promise<File> {
 
     // Compress dengan kualitas yang berkurang sampai ukuran < 200KB
     while (quality > 10) {
-      compressedBuffer = (await pipeline
-        .jpeg({ quality, mozjpeg: true })
-        .toBuffer()) as any;
+      compressedBuffer = (await pipeline.webp({ quality }).toBuffer()) as any;
 
       if (compressedBuffer.length <= MAX_SIZE_BYTES) {
         break;
@@ -53,22 +51,26 @@ export async function compressImage(file: File): Promise<File> {
             fit: "inside",
             withoutEnlargement: true,
           })
-          .jpeg({ quality: 80, mozjpeg: true })
+          .webp({ quality: 80 })
           .toBuffer()) as any;
       }
     }
 
     // Convert Buffer kembali ke File
-    const compressedFile = new File([compressedBuffer as any], file.name, {
-      type: "image/jpeg",
-      lastModified: Date.now(),
-    });
+    const compressedFile = new File(
+      [compressedBuffer as any],
+      file.name.replace(/\.[^.]+$/, ".webp"),
+      {
+        type: "image/webp",
+        lastModified: Date.now(),
+      },
+    );
 
     const originalSizeKB = (file.size / 1024).toFixed(2);
-    const compressedSizeKB = (compressedFile.size / 1024).toFixed(2);
-    console.log(
-      `Image compressed: ${originalSizeKB}KB → ${compressedSizeKB}KB (${Math.round((compressedFile.size / file.size) * 100)}%)`,
-    );
+    // const compressedSizeKB = (compressedFile.size / 1024).toFixed(2);
+    // console.log(
+    //   `Image compressed: ${originalSizeKB}KB → ${compressedSizeKB}KB (${Math.round((compressedFile.size / file.size) * 100)}%)`,
+    // );
 
     return compressedFile;
   } catch (error) {
