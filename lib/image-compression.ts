@@ -23,7 +23,7 @@ export async function compressImage(file: File): Promise<File> {
       });
     }
 
-    // Compress dengan kualitas yang berkurang sampai ukuran < 500KB
+    // Compress dengan kualitas yang berkurang sampai ukuran < 200KB
     while (quality > 10) {
       compressedBuffer = (await pipeline
         .jpeg({ quality, mozjpeg: true })

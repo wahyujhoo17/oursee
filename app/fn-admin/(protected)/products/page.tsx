@@ -48,7 +48,7 @@ interface UploadedImage {
 
 // Browser-compatible image compression using Canvas API
 async function compressImageBrowser(file: File): Promise<File> {
-  const MAX_SIZE_KB = 500;
+  const MAX_SIZE_KB = 200;
   const MAX_SIZE_BYTES = MAX_SIZE_KB * 1024;
 
   return new Promise((resolve, reject) => {
