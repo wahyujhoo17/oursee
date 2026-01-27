@@ -1,6 +1,6 @@
 import sharp from "sharp";
 
-const MAX_SIZE_KB = 500;
+const MAX_SIZE_KB = 200; // 200KB
 const MAX_SIZE_BYTES = MAX_SIZE_KB * 1024;
 
 export async function compressImage(file: File): Promise<File> {
