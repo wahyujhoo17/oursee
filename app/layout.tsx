@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   title: "Oursee",
   description: "Transforming Floral Dreams Into Luxurious Reality",
   icons: {
-    icon: "/assets/logo.png",
-    shortcut: "/assets/logo.png",
-    apple: "/assets/logo.png",
+    icon: "/assets/favicon.ico",
+    shortcut: "/assets/favicon.ico",
+    apple: "/assets/favicon.ico",
   },
 };
 
