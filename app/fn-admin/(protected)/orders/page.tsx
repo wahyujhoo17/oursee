@@ -1,18 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Table,
-  Tag,
-  Space,
-  Button,
-  Modal,
-  Descriptions,
-  Select,
-  message,
-  DatePicker,
-} from "antd";
-import { EyeOutlined, EditOutlined } from "@ant-design/icons";
+import Link from "next/link";
+import { Table, Tag, Space, Button, Modal, Descriptions, Select, message, DatePicker, Row, Col } from "antd";
+import { EyeOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 
@@ -118,9 +109,7 @@ export default function AdminOrdersPage() {
       title: "Method",
       dataIndex: "deliveryMethod",
       key: "deliveryMethod",
-      render: (method) => (
-        <Tag color={method === "PICKUP" ? "purple" : "magenta"}>{method}</Tag>
-      ),
+      render: (method) => <Tag color={method === "PICKUP" ? "purple" : "magenta"}>{method}</Tag>,
     },
     {
       title: "Date",
@@ -161,11 +150,7 @@ export default function AdminOrdersPage() {
       key: "action",
       width: 100,
       render: (_, record) => (
-        <Button
-          type="link"
-          icon={<EyeOutlined />}
-          onClick={() => handleViewDetails(record)}
-        >
+        <Button type="link" icon={<EyeOutlined />} onClick={() => handleViewDetails(record)}>
           View
         </Button>
       ),
@@ -176,6 +161,11 @@ export default function AdminOrdersPage() {
     <div className="px-2 sm:px-0">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl font-bold">Orders Management</h1>
+        <Link href="/fn-admin/orders/create">
+          <Button type="primary" icon={<PlusOutlined />}>
+            Buat Pesanan Baru
+          </Button>
+        </Link>
       </div>
 
       <Table
@@ -196,35 +186,19 @@ export default function AdminOrdersPage() {
         scroll={{ x: 1000 }}
       />
 
-      <Modal
-        title="Order Details"
-        open={detailModalOpen}
-        onCancel={() => setDetailModalOpen(false)}
-        footer={null}
-        width="95%"
-        style={{ maxWidth: 700 }}
-        centered
-      >
+      <Modal title="Order Details" open={detailModalOpen} onCancel={() => setDetailModalOpen(false)} footer={null} width="95%" style={{ maxWidth: 700 }} centered>
         {selectedOrder && (
           <div>
             <Descriptions bordered column={2}>
               <Descriptions.Item label="Order Number" span={2}>
                 {selectedOrder.orderNumber}
               </Descriptions.Item>
-              <Descriptions.Item label="Customer">
-                {selectedOrder.customer.name}
-              </Descriptions.Item>
-              <Descriptions.Item label="Phone">
-                {selectedOrder.customer.phone}
-              </Descriptions.Item>
+              <Descriptions.Item label="Customer">{selectedOrder.customer.name}</Descriptions.Item>
+              <Descriptions.Item label="Phone">{selectedOrder.customer.phone}</Descriptions.Item>
               <Descriptions.Item label="Status">
-                <Tag color={statusColors[selectedOrder.status]}>
-                  {selectedOrder.status}
-                </Tag>
+                <Tag color={statusColors[selectedOrder.status]}>{selectedOrder.status}</Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Delivery Method">
-                {selectedOrder.deliveryMethod}
-              </Descriptions.Item>
+              <Descriptions.Item label="Delivery Method">{selectedOrder.deliveryMethod}</Descriptions.Item>
               <Descriptions.Item label="Total Amount" span={2}>
                 Rp {selectedOrder.totalAmount.toLocaleString()}
               </Descriptions.Item>
@@ -251,8 +225,7 @@ export default function AdminOrdersPage() {
                 {
                   title: "Subtotal",
                   key: "subtotal",
-                  render: (_, record) =>
-                    `Rp ${(record.price * record.quantity).toLocaleString()}`,
+                  render: (_, record) => `Rp ${(record.price * record.quantity).toLocaleString()}`,
                 },
               ]}
             />
