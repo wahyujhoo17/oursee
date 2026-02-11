@@ -1,26 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Calendar,
-  Badge,
-  Modal,
-  Tag,
-  Card,
-  Button,
-  Select,
-  Tooltip,
-} from "antd";
-import {
-  ClockCircleOutlined,
-  UserOutlined,
-  PhoneOutlined,
-  ShoppingOutlined,
-  EnvironmentOutlined,
-  CalendarOutlined,
-  LeftOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { Calendar, Badge, Modal, Tag, Card, Button, Select, Tooltip } from "antd";
+import { ClockCircleOutlined, UserOutlined, PhoneOutlined, ShoppingOutlined, EnvironmentOutlined, CalendarOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -79,23 +61,12 @@ export default function AdminCalendarPage() {
           const isPickup = order.deliveryMethod === "PICKUP";
           const bgColor = isPickup ? "bg-purple-100" : "bg-pink-100";
           const textColor = isPickup ? "text-purple-700" : "text-pink-700";
-          const borderColor = isPickup
-            ? "border-purple-200"
-            : "border-pink-200";
+          const borderColor = isPickup ? "border-purple-200" : "border-pink-200";
 
           return (
-            <Tooltip
-              key={order.id}
-              title={`${order.customer.name} - ${order.status}`}
-            >
-              <div
-                className={`text-[10px] px-1.5 py-0.5 rounded border ${bgColor} ${borderColor} ${textColor} truncate font-medium flex items-center gap-1 hover:brightness-95 transition-all`}
-              >
-                {isPickup ? (
-                  <ShoppingOutlined className="text-[10px]" />
-                ) : (
-                  <EnvironmentOutlined className="text-[10px]" />
-                )}
+            <Tooltip key={order.id} title={`${order.customer.name} - ${order.status}`}>
+              <div className={`text-[10px] px-1.5 py-0.5 rounded border ${bgColor} ${borderColor} ${textColor} truncate font-medium flex items-center gap-1 hover:brightness-95 transition-all`}>
+                {isPickup ? <ShoppingOutlined className="text-[10px]" /> : <EnvironmentOutlined className="text-[10px]" />}
                 <span>{order.customer.name}</span>
               </div>
             </Tooltip>
@@ -125,10 +96,7 @@ export default function AdminCalendarPage() {
 
   return (
     <div className="px-2 sm:px-4 py-4">
-      <Card
-        className="shadow-lg rounded-xl border-0"
-        styles={{ body: { padding: 0 } }}
-      >
+      <Card className="shadow-lg rounded-xl border-0" styles={{ body: { padding: 0 } }}>
         <div className="overflow-x-auto">
           <Calendar
             cellRender={dateCellRender}
@@ -164,18 +132,14 @@ export default function AdminCalendarPage() {
                 );
               }
               return (
-                <div className="px-3 py-3 sm:px-6 sm:py-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gradient-to-r from-blue-50 to-indigo-50 gap-3 sm:gap-4">
+                <div className="px-3 py-3 sm:px-6 sm:py-4 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center bg-linear-to-r from-blue-50 to-indigo-50 gap-3 sm:gap-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="p-1.5 sm:p-2 bg-white rounded-lg shadow-sm">
                       <CalendarOutlined className="text-lg sm:text-xl text-blue-600" />
                     </div>
                     <div>
-                      <h2 className="text-base sm:text-xl font-bold text-gray-800 m-0">
-                        Kalender Pemesanan
-                      </h2>
-                      <p className="text-xs sm:text-sm text-gray-600 m-0 hidden sm:block">
-                        Kelola jadwal pengiriman dan pickup
-                      </p>
+                      <h2 className="text-base sm:text-xl font-bold text-gray-800 m-0">Kalender Pemesanan</h2>
+                      <p className="text-xs sm:text-sm text-gray-600 m-0 hidden sm:block">Kelola jadwal pengiriman dan pickup</p>
                     </div>
                   </div>
 
@@ -218,7 +182,11 @@ export default function AdminCalendarPage() {
                     />
                     <Button
                       type="primary"
-                      className="ml-1"
+                      className="ml-1 border-0 shadow-lg"
+                      style={{
+                        background: "linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)",
+                        color: "#1e293b",
+                      }}
                       onClick={() => {
                         const now = dayjs();
                         onChange(now);
@@ -241,12 +209,8 @@ export default function AdminCalendarPage() {
               <CalendarOutlined className="text-blue-600" />
             </div>
             <div>
-              <div className="font-bold text-gray-800">
-                Pesanan - {selectedDate.format("DD MMMM YYYY")}
-              </div>
-              <div className="text-xs text-gray-500 font-normal">
-                {dayOrders.length} pesanan
-              </div>
+              <div className="font-bold text-gray-800">Pesanan - {selectedDate.format("DD MMMM YYYY")}</div>
+              <div className="text-xs text-gray-500 font-normal">{dayOrders.length} pesanan</div>
             </div>
           </div>
         }
@@ -270,8 +234,7 @@ export default function AdminCalendarPage() {
                 size="small"
                 className="shadow-sm hover:shadow-lg transition-all border-l-4 hover:scale-[1.01]"
                 style={{
-                  borderLeftColor:
-                    order.deliveryMethod === "PICKUP" ? "#722ed1" : "#eb2f96",
+                  borderLeftColor: order.deliveryMethod === "PICKUP" ? "#722ed1" : "#eb2f96",
                 }}
                 styles={{ body: { padding: "12px 16px" } }}
               >
@@ -280,25 +243,10 @@ export default function AdminCalendarPage() {
                     <Tag color="blue" className="text-xs font-semibold">
                       {order.orderNumber}
                     </Tag>
-                    <Tag
-                      color={statusColors[order.status]}
-                      className="font-medium"
-                    >
+                    <Tag color={statusColors[order.status]} className="font-medium">
                       {order.status}
                     </Tag>
-                    <Tag
-                      color={
-                        order.deliveryMethod === "PICKUP" ? "purple" : "magenta"
-                      }
-                      icon={
-                        order.deliveryMethod === "PICKUP" ? (
-                          <ShoppingOutlined />
-                        ) : (
-                          <EnvironmentOutlined />
-                        )
-                      }
-                      className="font-medium"
-                    >
+                    <Tag color={order.deliveryMethod === "PICKUP" ? "purple" : "magenta"} icon={order.deliveryMethod === "PICKUP" ? <ShoppingOutlined /> : <EnvironmentOutlined />} className="font-medium">
                       {order.deliveryMethod}
                     </Tag>
                   </div>
@@ -309,12 +257,8 @@ export default function AdminCalendarPage() {
                         <UserOutlined className="text-blue-500 text-sm" />
                       </div>
                       <div className="flex-1">
-                        <div className="text-xs text-gray-500 mb-0.5">
-                          Pelanggan
-                        </div>
-                        <div className="font-semibold text-gray-800">
-                          {order.customer.name}
-                        </div>
+                        <div className="text-xs text-gray-500 mb-0.5">Pelanggan</div>
+                        <div className="font-semibold text-gray-800">{order.customer.name}</div>
                       </div>
                     </div>
 
@@ -323,12 +267,8 @@ export default function AdminCalendarPage() {
                         <PhoneOutlined className="text-green-500 text-sm" />
                       </div>
                       <div className="flex-1">
-                        <div className="text-xs text-gray-500 mb-0.5">
-                          Telepon
-                        </div>
-                        <div className="font-semibold text-gray-800">
-                          {order.customer.phone}
-                        </div>
+                        <div className="text-xs text-gray-500 mb-0.5">Telepon</div>
+                        <div className="font-semibold text-gray-800">{order.customer.phone}</div>
                       </div>
                     </div>
 
@@ -337,28 +277,18 @@ export default function AdminCalendarPage() {
                         <ClockCircleOutlined className="text-orange-500 text-sm" />
                       </div>
                       <div className="flex-1">
-                        <div className="text-xs text-gray-500 mb-0.5">
-                          Waktu
-                        </div>
-                        <div className="font-semibold text-gray-800">
-                          {order.pickupTime ||
-                            order.deliveryTime ||
-                            "Belum ditentukan"}
-                        </div>
+                        <div className="text-xs text-gray-500 mb-0.5">Waktu</div>
+                        <div className="font-semibold text-gray-800">{order.pickupTime || order.deliveryTime || "Belum ditentukan"}</div>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-2 p-2 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200">
+                    <div className="flex items-start gap-2 p-2 rounded-lg bg-linear-to-br from-green-50 to-emerald-50 border border-green-200">
                       <div className="p-1.5 bg-white rounded shadow-sm">
                         <ShoppingOutlined className="text-green-600 text-sm" />
                       </div>
                       <div className="flex-1">
-                        <div className="text-xs text-green-600 mb-0.5">
-                          Total Pembayaran
-                        </div>
-                        <div className="font-bold text-lg text-green-700">
-                          Rp {order.totalAmount.toLocaleString("id-ID")}
-                        </div>
+                        <div className="text-xs text-green-600 mb-0.5">Total Pembayaran</div>
+                        <div className="font-bold text-lg text-green-700">Rp {order.totalAmount.toLocaleString("id-ID")}</div>
                       </div>
                     </div>
                   </div>

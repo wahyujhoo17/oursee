@@ -312,7 +312,16 @@ export default function AdminDashboardPage() {
               )}
 
               <div className="flex gap-4">
-                <Button onClick={searchOrder} loading={searchLoading} size="large" className="flex-1 rounded-lg bg-gray-900 text-white hover:bg-gray-800">
+                <Button
+                  onClick={searchOrder}
+                  loading={searchLoading}
+                  size="large"
+                  className="flex-1 rounded-lg border-0 font-semibold"
+                  style={{
+                    background: "linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)",
+                    color: "#1e293b",
+                  }}
+                >
                   Search Order
                 </Button>
                 {searchedOrder && (
@@ -334,14 +343,7 @@ export default function AdminDashboardPage() {
                 <p className="mt-1 text-sm text-gray-500">Completed pickup orders</p>
               </div>
               <div className="flex gap-3">
-                <Input
-                  placeholder="Search orders..."
-                  value={searchPickedUp}
-                  onChange={(e) => setSearchPickedUp(e.target.value)}
-                  prefix={<SearchOutlined className="text-gray-400" />}
-                  className="w-64 rounded-lg"
-                  size="large"
-                />
+                <Input placeholder="Search orders..." value={searchPickedUp} onChange={(e) => setSearchPickedUp(e.target.value)} prefix={<SearchOutlined className="text-gray-400" />} className="w-64 rounded-lg" size="large" />
                 <Select
                   value={filterDate}
                   onChange={setFilterDate}

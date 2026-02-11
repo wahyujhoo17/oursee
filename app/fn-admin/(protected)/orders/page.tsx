@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Table, Tag, Space, Button, Modal, Descriptions, Select, message, DatePicker, Row, Col, Input } from "antd";
-import { EyeOutlined, EditOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 
@@ -113,6 +113,33 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const handleCancelOrder = (order: Order) => {
+    Modal.confirm({
+      title: "Cancel Order",
+      content: `Apakah Anda yakin ingin membatalkan order ${order.orderNumber}?`,
+      okText: "Cancel Order",
+      okType: "danger",
+      cancelText: "Batal",
+      onOk() {
+        cancelOrder(order.id);
+      },
+    });
+  };
+
+  const cancelOrder = async (orderId: string) => {
+    try {
+      await fetch(`/api/orders/${orderId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "CANCELLED" }),
+      });
+      message.success("Order berhasil dibatalkan");
+      fetchOrders(pagination.current, pagination.pageSize);
+    } catch (error) {
+      message.error("Failed to cancel order");
+    }
+  };
+
   const columns: ColumnsType<Order> = [
     {
       title: "Order #",
@@ -140,7 +167,19 @@ export default function AdminOrdersPage() {
       title: "Method",
       dataIndex: "deliveryMethod",
       key: "deliveryMethod",
-      render: (method) => <Tag color={method === "PICKUP" ? "purple" : "magenta"}>{method}</Tag>,
+      render: (method) => (
+        <Tag
+          style={{
+            border: method === "PICKUP" ? "2px solid #9333ea" : "2px solid #2563eb",
+            color: method === "PICKUP" ? "#9333ea" : "#2563eb",
+            background: method === "PICKUP" ? "#f3e8ff" : "#dbeafe",
+            borderRadius: "9999px",
+            padding: "4px 12px",
+          }}
+        >
+          {method}
+        </Tag>
+      ),
     },
     {
       title: "Date",
@@ -198,11 +237,18 @@ export default function AdminOrdersPage() {
     {
       title: "Action",
       key: "action",
-      width: 100,
+      width: 150,
       render: (_, record) => (
-        <Button type="link" icon={<EyeOutlined />} onClick={() => handleViewDetails(record)}>
-          View
-        </Button>
+        <Space size="small">
+          <Button type="link" icon={<EyeOutlined />} onClick={() => handleViewDetails(record)} size="small">
+            View
+          </Button>
+          {record.status !== "CANCELLED" && (
+            <Button type="link" danger icon={<DeleteOutlined />} onClick={() => handleCancelOrder(record)} size="small">
+              Cancel
+            </Button>
+          )}
+        </Space>
       ),
     },
   ];
@@ -218,7 +264,16 @@ export default function AdminOrdersPage() {
       <div className="flex justify-between items-center mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl font-bold">Orders Management</h1>
         <Link href="/fn-admin/orders/create">
-          <Button type="primary" icon={<PlusOutlined />}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            className="border-0 shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)",
+              color: "#00008B",
+            }}
+            size="large"
+          >
             Buat Pesanan Baru
           </Button>
         </Link>
@@ -305,6 +360,7 @@ export default function AdminOrdersPage() {
             <h3 className="text-lg font-semibold mt-6 mb-3">Order Items</h3>
             <Table
               dataSource={selectedOrder.items}
+              rowKey={(_, index) => `item-${index}`}
               pagination={false}
               size="small"
               columns={[
