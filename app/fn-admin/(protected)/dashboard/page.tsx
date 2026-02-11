@@ -124,7 +124,10 @@ export default function AdminDashboardPage() {
 
     if (searchPickedUp.trim()) {
       const search = searchPickedUp.toLowerCase();
-      filtered = filtered.filter((order: Order) => order.orderNumber.toLowerCase().includes(search) || order.customerName.toLowerCase().includes(search));
+      filtered = filtered.filter((order: Order) => {
+        const customerName = (order.customerName ?? order.customer?.name ?? "").toLowerCase();
+        return order.orderNumber.toLowerCase().includes(search) || customerName.includes(search);
+      });
     }
 
     return filtered;
