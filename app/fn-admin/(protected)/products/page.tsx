@@ -461,7 +461,11 @@ export default function AdminProductsPage() {
           icon={<PlusOutlined />}
           onClick={handleAddProduct}
           size="middle"
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto border-0 shadow-lg"
+          style={{
+            background: 'linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)',
+            color: '#1e293b'
+          }}
         >
           Add Product
         </Button>
@@ -752,7 +756,11 @@ export default function AdminProductsPage() {
                 htmlType="submit"
                 loading={loading}
                 icon={editingProduct ? <EditOutlined /> : <PlusOutlined />}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto border-0 shadow-lg"
+                style={{
+                  background: 'linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)',
+                  color: '#1e293b'
+                }}
               >
                 {editingProduct ? "Update Product" : "Create Product"}
               </Button>

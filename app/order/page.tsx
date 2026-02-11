@@ -390,7 +390,16 @@ export default function OrderFormPage() {
                 <label className="block text-sm font-medium mb-1">
                   Jam Pengambilan <span className="text-red-500">*</span>
                 </label>
-                <input type="time" name="jam" value={formData.jam} onChange={handleInputChange} min="08:00" max="19:00" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600" required />
+                <input
+                  type="time"
+                  name="jam"
+                  value={formData.jam}
+                  onChange={handleInputChange}
+                  min="08:00"
+                  max="19:00"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  required
+                />
               </div>
             </div>
 
@@ -412,7 +421,7 @@ export default function OrderFormPage() {
               <span className="block text-sm font-medium mb-2">Add-On (Opsional)</span>
               <label className="flex items-center gap-2 mb-2">
                 <input type="checkbox" name="greeting_card" checked={formData.addons.greeting_card} onChange={handleInputChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
-                <span>Greeting Card Tulis Tangan (+Rp 5.000)</span>
+                <span>Greeting Card Cetak (+Rp 5.000)</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" name="stick_card" checked={formData.addons.stick_card} onChange={handleInputChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
@@ -605,15 +614,11 @@ export default function OrderFormPage() {
                   if (waConfirmed) setShowReceipt(false);
                 }}
                 disabled={!waConfirmed}
-                className={`w-full mt-3 px-4 py-3 font-semibold rounded-lg transition ${
-                  waConfirmed ? "bg-gray-200 hover:bg-gray-300 text-gray-800" : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                }`}
+                className={`w-full mt-3 px-4 py-3 font-semibold rounded-lg transition ${waConfirmed ? "bg-gray-200 hover:bg-gray-300 text-gray-800" : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
               >
                 Tutup
               </button>
-              {!waConfirmed && (
-                <p className="mt-2 text-xs text-gray-500 text-center">Klik "Konfirmasi WA" untuk kirim bukti transfer sebelum menutup nota.</p>
-              )}
+              {!waConfirmed && <p className="mt-2 text-xs text-gray-500 text-center">Klik "Konfirmasi WA" untuk kirim bukti transfer sebelum menutup nota.</p>}
             </div>
           </div>
         </div>
