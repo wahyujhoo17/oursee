@@ -310,14 +310,12 @@ export default function AdminProductsPage() {
     const imageToRemove = uploadedImages[index];
     const newImages = uploadedImages.filter((_, idx) => idx !== index);
 
-    // If removed image was main and there are still images, set first as main
     if (imageToRemove.isMain && newImages.length > 0) {
       newImages[0].isMain = true;
     }
 
     setUploadedImages(newImages);
 
-    // Delete file from UploadThing if it has a key
     if (imageToRemove.key) {
       try {
         await fetch("/api/uploadthing/delete", {
