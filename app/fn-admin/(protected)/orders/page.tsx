@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Table, Tag, Space, Button, Modal, Descriptions, Select, message, DatePicker, Row, Col } from "antd";
-import { EyeOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Table, Tag, Space, Button, Modal, Descriptions, Select, message, DatePicker, Row, Col, Input } from "antd";
+import { EyeOutlined, EditOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 
@@ -14,6 +14,9 @@ interface Order {
     name: string;
     phone: string;
   };
+  recipientName?: string | null;
+  recipientPhone?: string | null;
+  notes?: string | null;
   status: string;
   totalAmount: number;
   deliveryMethod: string;
@@ -36,6 +39,26 @@ const statusColors: Record<string, string> = {
   CANCELLED: "red",
 };
 
+const getAddonInfo = (notes?: string | null) => {
+  const text = notes || "";
+  return {
+    greeting: /greeting card:\s*ya/i.test(text),
+    stick: /stick card:\s*ya/i.test(text),
+  };
+};
+
+const getPickupCode = (notes?: string | null) => {
+  const match = (notes || "").match(/Pickup Code: (OS-\d+)/);
+  return match ? match[1] : "-";
+};
+
+const getOrderDescription = (notes?: string | null) => {
+  const text = notes || "";
+  const match = text.match(/Katatan Tambahan:\s*([\s\S]*?)\n\nAdd-ons:/i);
+  const description = match ? match[1].trim() : "";
+  return description || "-";
+};
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,6 +69,8 @@ export default function AdminOrdersPage() {
     pageSize: 10,
     total: 0,
   });
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     fetchOrders(1, 10);
@@ -96,14 +121,20 @@ export default function AdminOrdersPage() {
       width: 150,
     },
     {
+      title: "Kode Ambil",
+      key: "pickupCode",
+      render: (_, record) => getPickupCode(record.notes),
+      width: 120,
+    },
+    {
       title: "Customer",
-      dataIndex: ["customer", "name"],
       key: "customerName",
+      render: (_, record) => record.recipientName || record.customer?.name || "-",
     },
     {
       title: "Phone",
-      dataIndex: ["customer", "phone"],
       key: "phone",
+      render: (_, record) => record.recipientPhone || record.customer?.phone || "-",
     },
     {
       title: "Method",
@@ -124,6 +155,25 @@ export default function AdminOrdersPage() {
       dataIndex: "totalAmount",
       key: "totalAmount",
       render: (amount) => `Rp ${amount.toLocaleString()}`,
+    },
+    {
+      title: "Add-ons",
+      key: "addons",
+      render: (_, record) => {
+        const addons = getAddonInfo(record.notes);
+        return (
+          <div className="flex flex-col gap-1">
+            <span className="flex items-center gap-2">
+              {addons.greeting ? <CheckCircleOutlined title="Greeting Card Cetak" style={{ color: "#16a34a" }} /> : <CloseCircleOutlined title="Greeting Card Cetak" style={{ color: "#dc2626" }} />}
+              <span>Greeting Card Cetak</span>
+            </span>
+            <span className="flex items-center gap-2">
+              {addons.stick ? <CheckCircleOutlined title="Stick Card" style={{ color: "#16a34a" }} /> : <CloseCircleOutlined title="Stick Card" style={{ color: "#dc2626" }} />}
+              <span>Stick Card</span>
+            </span>
+          </div>
+        );
+      },
     },
     {
       title: "Status",
@@ -157,6 +207,12 @@ export default function AdminOrdersPage() {
     },
   ];
 
+  const filteredOrders = orders.filter((order) => {
+    const matchSearch = searchText ? order.orderNumber.toLowerCase().includes(searchText.toLowerCase()) || (order.recipientName || order.customer?.name || "").toLowerCase().includes(searchText.toLowerCase()) : true;
+    const matchStatus = statusFilter ? order.status === statusFilter : true;
+    return matchSearch && matchStatus;
+  });
+
   return (
     <div className="px-2 sm:px-0">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
@@ -168,9 +224,28 @@ export default function AdminOrdersPage() {
         </Link>
       </div>
 
+      <div className="flex justify-end gap-2 mb-4">
+        <Input.Search placeholder="Cari order number atau nama..." value={searchText} onChange={(e) => setSearchText(e.target.value)} style={{ width: 280 }} allowClear />
+        <Select
+          placeholder="Filter Status"
+          value={statusFilter}
+          onChange={setStatusFilter}
+          style={{ width: 160 }}
+          allowClear
+          options={[
+            { label: "Pending", value: "PENDING" },
+            { label: "Confirmed", value: "CONFIRMED" },
+            { label: "Preparing", value: "PREPARING" },
+            { label: "Ready", value: "READY" },
+            { label: "Completed", value: "COMPLETED" },
+            { label: "Cancelled", value: "CANCELLED" },
+          ]}
+        />
+      </div>
+
       <Table
         columns={columns}
-        dataSource={orders}
+        dataSource={filteredOrders}
         rowKey="id"
         loading={loading}
         pagination={{
@@ -193,8 +268,31 @@ export default function AdminOrdersPage() {
               <Descriptions.Item label="Order Number" span={2}>
                 {selectedOrder.orderNumber}
               </Descriptions.Item>
-              <Descriptions.Item label="Customer">{selectedOrder.customer.name}</Descriptions.Item>
-              <Descriptions.Item label="Phone">{selectedOrder.customer.phone}</Descriptions.Item>
+              <Descriptions.Item label="Kode Ambil" span={2}>
+                {getPickupCode(selectedOrder.notes)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Deskripsi" span={2}>
+                {getOrderDescription(selectedOrder.notes)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Customer">{selectedOrder.recipientName || selectedOrder.customer?.name || "-"}</Descriptions.Item>
+              <Descriptions.Item label="Phone">{selectedOrder.recipientPhone || selectedOrder.customer?.phone || "-"}</Descriptions.Item>
+              <Descriptions.Item label="Add-ons" span={2}>
+                {(() => {
+                  const addons = getAddonInfo(selectedOrder.notes);
+                  return (
+                    <div className="flex flex-col gap-1">
+                      <span className="flex items-center gap-2">
+                        {addons.greeting ? <CheckCircleOutlined title="Greeting Card Cetak" style={{ color: "#16a34a" }} /> : <CloseCircleOutlined title="Greeting Card Cetak" style={{ color: "#dc2626" }} />}
+                        <span>Greeting Card Cetak</span>
+                      </span>
+                      <span className="flex items-center gap-2">
+                        {addons.stick ? <CheckCircleOutlined title="Stick Card" style={{ color: "#16a34a" }} /> : <CloseCircleOutlined title="Stick Card" style={{ color: "#dc2626" }} />}
+                        <span>Stick Card</span>
+                      </span>
+                    </div>
+                  );
+                })()}
+              </Descriptions.Item>
               <Descriptions.Item label="Status">
                 <Tag color={statusColors[selectedOrder.status]}>{selectedOrder.status}</Tag>
               </Descriptions.Item>

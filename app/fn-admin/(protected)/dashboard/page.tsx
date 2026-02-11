@@ -1,6 +1,6 @@
 "use client";
 
-import { Row, Col, Card, Statistic, Table, Tag, Spin, Input, Button, message, Select, Modal, Alert } from "antd";
+import { Table, Tag, Spin, Input, Button, message, Select, Modal } from "antd";
 import { ShoppingOutlined, ShoppingCartOutlined, DollarOutlined, CalendarOutlined, SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -17,6 +17,7 @@ interface Order {
   orderNumber: string;
   customer?: { name: string };
   customerName?: string;
+  notes?: string | null;
   totalAmount: number;
   status: string;
   pickupDate: string;
@@ -30,8 +31,6 @@ export default function AdminDashboardPage() {
     totalRevenue: 0,
     todayPickups: 0,
   });
-  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
-  const [upcomingDeliveries, setUpcomingDeliveries] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [verificationCode, setVerificationCode] = useState("");
   const [searchedOrder, setSearchedOrder] = useState<Order | null>(null);
@@ -133,6 +132,11 @@ export default function AdminDashboardPage() {
     return filtered;
   };
 
+  const getPickupCode = (notes?: string | null) => {
+    const match = (notes || "").match(/Pickup Code: (OS-\d+)/);
+    return match ? match[1] : "-";
+  };
+
   const pickedUpColumns = [
     {
       title: "No Order",
@@ -143,7 +147,7 @@ export default function AdminDashboardPage() {
     {
       title: "Kode Ambil",
       key: "pickupCode",
-      render: () => "BK-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+      render: (_: unknown, record: Order) => getPickupCode(record.notes),
       width: 120,
     },
     {
@@ -181,7 +185,7 @@ export default function AdminDashboardPage() {
 
       // Calculate stats
       const totalOrders = orders.length;
-      const totalRevenue = orders.filter((order: Order) => order.status !== "CANCELLED").reduce((sum: number, order: Order) => sum + (order.totalAmount || 0), 0);
+      const totalRevenue = orders.filter((order: Order) => order.status === "COMPLETED").reduce((sum: number, order: Order) => sum + (order.totalAmount || 0), 0);
 
       // Today's pickups
       const today = dayjs().format("YYYY-MM-DD");
@@ -193,18 +197,6 @@ export default function AdminDashboardPage() {
         totalRevenue,
         todayPickups,
       });
-
-      // Recent orders (last 5)
-      const recent = orders.sort((a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5);
-      setRecentOrders(recent);
-
-      // Upcoming deliveries (next 7 days, not completed)
-      const nextWeek = dayjs().add(7, "day");
-      const upcoming = orders
-        .filter((order: Order) => dayjs(order.pickupDate).isAfter(dayjs()) && dayjs(order.pickupDate).isBefore(nextWeek) && order.status !== "COMPLETED" && order.status !== "CANCELLED")
-        .sort((a: Order, b: Order) => new Date(a.pickupDate).getTime() - new Date(b.pickupDate).getTime())
-        .slice(0, 5);
-      setUpcomingDeliveries(upcoming);
 
       // Picked up orders (COMPLETED status)
       const pickedUp = orders.filter((order: Order) => order.status === "COMPLETED").sort((a: Order, b: Order) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -227,58 +219,6 @@ export default function AdminDashboardPage() {
     return colors[status] || "default";
   };
 
-  const orderColumns = [
-    {
-      title: "Order #",
-      dataIndex: "orderNumber",
-      key: "orderNumber",
-      width: 120,
-    },
-    {
-      title: "Customer",
-      dataIndex: "customerName",
-      key: "customerName",
-    },
-    {
-      title: "Total",
-      dataIndex: "totalPrice",
-      key: "totalPrice",
-      render: (price: number) => `Rp ${(price || 0).toLocaleString()}`,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string) => <Tag color={getStatusColor(status)}>{status}</Tag>,
-    },
-  ];
-
-  const deliveryColumns = [
-    {
-      title: "Order #",
-      dataIndex: "orderNumber",
-      key: "orderNumber",
-      width: 120,
-    },
-    {
-      title: "Customer",
-      dataIndex: "customerName",
-      key: "customerName",
-    },
-    {
-      title: "Pickup Date",
-      dataIndex: "pickupDate",
-      key: "pickupDate",
-      render: (date: string) => dayjs(date).format("DD MMM YYYY"),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status: string) => <Tag color={getStatusColor(status)}>{status}</Tag>,
-    },
-  ];
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -288,106 +228,143 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="px-2 sm:px-0">
-      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Dashboard</h1>
+    <div className="min-h-screen bg-white">
+      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-3xl font-semibold text-gray-900">Good Morning, Admin!</h1>
+          <p className="mt-1 text-sm text-gray-500">Here's what's happening with your store today.</p>
+        </div>
 
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="Total Products" value={stats.totalProducts} prefix={<ShoppingOutlined />} className="[&_.ant-statistic-content]:text-green-600" />
-          </Card>
-        </Col>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
+          {/* Total Produk */}
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-blue-100 via-blue-50 to-purple-50 p-8 shadow-sm">
+            <div className="mb-6 flex items-center gap-2">
+              <ShoppingOutlined className="text-sm text-gray-600" />
+              <p className="text-xs font-medium text-gray-600">Products</p>
+            </div>
+            <p className="text-5xl font-bold text-gray-900">{stats.totalProducts}</p>
+            <p className="mt-4 text-sm text-gray-600 leading-relaxed">Total active products in your catalog right now.</p>
+          </div>
 
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="Total Orders" value={stats.totalOrders} prefix={<ShoppingCartOutlined />} className="[&_.ant-statistic-content]:text-blue-500" />
-          </Card>
-        </Col>
+          {/* Total Orders */}
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-purple-100 via-purple-50 to-pink-50 p-8 shadow-sm">
+            <div className="mb-6 flex items-center gap-2">
+              <ShoppingCartOutlined className="text-sm text-gray-600" />
+              <p className="text-xs font-medium text-gray-600">Orders</p>
+            </div>
+            <p className="text-5xl font-bold text-gray-900">{stats.totalOrders}</p>
+            <p className="mt-4 text-sm text-gray-600 leading-relaxed">All orders received from customers.</p>
+          </div>
 
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="Revenue" value={stats.totalRevenue} prefix="Rp " className="[&_.ant-statistic-content]:text-red-600" />
-          </Card>
-        </Col>
+          {/* Revenue */}
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-green-100 via-green-50 to-blue-50 p-8 shadow-sm">
+            <div className="mb-6 flex items-center gap-2">
+              <DollarOutlined className="text-sm text-gray-600" />
+              <p className="text-xs font-medium text-gray-600">Revenue</p>
+            </div>
+            <p className="text-4xl font-bold text-gray-900">Rp {stats.totalRevenue.toLocaleString()}</p>
+            <p className="mt-4 text-sm text-gray-600 leading-relaxed">Total revenue from completed orders only.</p>
+          </div>
 
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic title="Today's Pickups" value={stats.todayPickups} prefix={<CalendarOutlined />} className="[&_.ant-statistic-content]:text-purple-600" />
-          </Card>
-        </Col>
-      </Row>
+          {/* Pickup Hari Ini */}
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-orange-100 via-orange-50 to-yellow-50 p-8 shadow-sm">
+            <div className="mb-6 flex items-center gap-2">
+              <CalendarOutlined className="text-sm text-gray-600" />
+              <p className="text-xs font-medium text-gray-600">Today's Pickup</p>
+            </div>
+            <p className="text-5xl font-bold text-gray-900">{stats.todayPickups}</p>
+            <p className="mt-4 text-sm text-gray-600 leading-relaxed">Scheduled pickups for today.</p>
+          </div>
+        </div>
 
-      <Row gutter={[16, 16]} style={{ marginTop: 32 }}>
-        <Col xs={24} lg={16}>
-          <Card className="mb-6">
-            <h2 className="text-lg font-bold mb-4">Verifikasi Manual</h2>
-            <p className="text-gray-600 mb-4">Tempelkan hasil scan atau ketik Kode Ambil / No Order, lalu klik Tandai Diambil.</p>
-            <div className="mb-4">
-              <Input placeholder="Contoh: BK-4F9C2A atau ORD-000127" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} onPressEnter={searchOrder} size="large" />
+        {/* Verification Section */}
+        <div className="mt-10">
+          <div className="rounded-2xl bg-gray-100 p-8 shadow-sm">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Order Verification</h2>
+              <p className="mt-1 text-sm text-gray-500">Scan or enter pickup code to mark as completed</p>
             </div>
 
-            {searchedOrder && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                <p className="text-sm font-semibold">Order: {searchedOrder.orderNumber}</p>
-                <p className="text-sm">Customer: {searchedOrder.customer?.name || searchedOrder.customerName || "Unknown"}</p>
-                <p className="text-sm">Total: Rp {(searchedOrder.totalAmount || 0).toLocaleString()}</p>
-                <p className="text-sm">
-                  Status: <Tag color={getStatusColor(searchedOrder.status)}>{searchedOrder.status}</Tag>
-                </p>
-              </div>
-            )}
-
-            <div className="flex gap-2">
-              <Button onClick={searchOrder} loading={searchLoading} size="large" className="bg-slate-900 text-white hover:bg-slate-800">
-                Cari Pesanan
-              </Button>
-              {searchedOrder && (
-                <Button onClick={markAsPickedUp} loading={searchLoading} size="large" className="bg-green-600 text-white hover:bg-green-700">
-                  Tandai Diambil
-                </Button>
-              )}
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-        <Col xs={24} lg={12}>
-          <Card title="Recent Orders" className="h-full">
-            {recentOrders.length > 0 ? <Table dataSource={recentOrders} columns={orderColumns} pagination={false} size="small" rowKey="id" /> : <p className="text-gray-500">No orders yet</p>}
-          </Card>
-        </Col>
-
-        <Col xs={24} lg={12}>
-          <Card title="Upcoming Deliveries (Next 7 Days)" className="h-full">
-            {upcomingDeliveries.length > 0 ? <Table dataSource={upcomingDeliveries} columns={deliveryColumns} pagination={false} size="small" rowKey="id" /> : <p className="text-gray-500">No scheduled deliveries</p>}
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-        <Col xs={24}>
-          <Card title="Daftar Pesanan">
-            <div className="mb-4 flex gap-2 flex-col sm:flex-row">
-              <Input placeholder="Cari nama / order / pickup code..." value={searchPickedUp} onChange={(e) => setSearchPickedUp(e.target.value)} prefix={<SearchOutlined />} className="flex-1" />
-              <Select
-                value={filterDate}
-                onChange={setFilterDate}
-                style={{ width: 150 }}
-                options={[
-                  { label: "Hari Ini", value: "today" },
-                  { label: "Semua", value: "all" },
-                ]}
+            <div className="relative space-y-5">
+              <Input
+                placeholder="Enter pickup code or order number..."
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                onPressEnter={searchOrder}
+                size="large"
+                prefix={<SearchOutlined className="text-gray-400" />}
+                className="rounded-lg"
               />
+
+              {searchedOrder && (
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <p className="text-base font-semibold text-gray-900">{searchedOrder.orderNumber}</p>
+                      <p className="text-sm text-gray-600">{searchedOrder.customer?.name || searchedOrder.customerName || "Unknown"}</p>
+                      <p className="text-sm font-medium text-gray-900">Rp {(searchedOrder.totalAmount || 0).toLocaleString()}</p>
+                    </div>
+                    <Tag color={getStatusColor(searchedOrder.status)}>{searchedOrder.status}</Tag>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-4">
+                <Button onClick={searchOrder} loading={searchLoading} size="large" className="flex-1 rounded-lg bg-gray-900 text-white hover:bg-gray-800">
+                  Search Order
+                </Button>
+                {searchedOrder && (
+                  <Button onClick={markAsPickedUp} loading={searchLoading} size="large" className="flex-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                    Mark as Picked Up
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Order List Section */}
+        <div className="mt-10">
+          <div className="rounded-2xl bg-gray-100 p-8 shadow-sm">
+            <div className="relative mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Order History</h3>
+                <p className="mt-1 text-sm text-gray-500">Completed pickup orders</p>
+              </div>
+              <div className="flex gap-3">
+                <Input
+                  placeholder="Search orders..."
+                  value={searchPickedUp}
+                  onChange={(e) => setSearchPickedUp(e.target.value)}
+                  prefix={<SearchOutlined className="text-gray-400" />}
+                  className="w-64 rounded-lg"
+                  size="large"
+                />
+                <Select
+                  value={filterDate}
+                  onChange={setFilterDate}
+                  size="large"
+                  className="w-40"
+                  options={[
+                    { label: "Hari Ini", value: "today" },
+                    { label: "Semua", value: "all" },
+                  ]}
+                />
+              </div>
             </div>
 
-            <Table dataSource={getFilteredPickedUpOrders()} columns={pickedUpColumns} pagination={{ pageSize: 10 }} size="small" rowKey="id" />
-          </Card>
-        </Col>
-      </Row>
+            <div className="relative mt-6 overflow-hidden rounded-xl border border-gray-200">
+              <Table dataSource={getFilteredPickedUpOrders()} columns={pickedUpColumns} pagination={{ pageSize: 10, showSizeChanger: false }} size="middle" rowKey="id" />
+            </div>
+          </div>
+        </div>
+      </div>
 
+      {/* Modal */}
       <Modal
-        title={modalType === "success" ? "✅ Pesanan Ditemukan" : modalType === "error" ? "❌ Pesanan Tidak Ditemukan" : "⚠️ Peringatan"}
+        title={modalType === "success" ? "✅ Order Found" : modalType === "error" ? "❌ Order Not Found" : "⚠️ Warning"}
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={
@@ -400,11 +377,12 @@ export default function AdminDashboardPage() {
                     setSearchedOrder(null);
                     setVerificationCode("");
                   }}
+                  className="rounded-lg"
                 >
-                  Batal
+                  Cancel
                 </Button>,
-                <Button key="submit" type="primary" loading={searchLoading} onClick={markAsPickedUp} className="bg-green-600 hover:bg-green-700">
-                  Tandai Diambil
+                <Button key="submit" type="primary" loading={searchLoading} onClick={markAsPickedUp} className="rounded-lg bg-blue-600 hover:bg-blue-700">
+                  Mark as Picked Up
                 </Button>,
               ]
             : [
@@ -414,8 +392,9 @@ export default function AdminDashboardPage() {
                     setModalVisible(false);
                     setVerificationCode("");
                   }}
+                  className="rounded-lg"
                 >
-                  Tutup
+                  Close
                 </Button>,
               ]
         }

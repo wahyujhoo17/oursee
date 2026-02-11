@@ -114,7 +114,6 @@ export default function CreateOrderPage() {
     try {
       setLoading(true);
 
-      // Buat customer baru
       const customerRes = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

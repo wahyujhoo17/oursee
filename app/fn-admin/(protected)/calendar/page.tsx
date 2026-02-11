@@ -75,7 +75,7 @@ export default function AdminCalendarPage() {
 
     return (
       <div className="flex flex-col gap-1 mt-1">
-        {dayOrders.slice(0, 3).map((order) => {
+        {dayOrders.map((order) => {
           const isPickup = order.deliveryMethod === "PICKUP";
           const bgColor = isPickup ? "bg-purple-100" : "bg-pink-100";
           const textColor = isPickup ? "text-purple-700" : "text-pink-700";
@@ -101,11 +101,6 @@ export default function AdminCalendarPage() {
             </Tooltip>
           );
         })}
-        {dayOrders.length > 3 && (
-          <div className="text-[10px] text-center text-gray-500 font-medium">
-            +{dayOrders.length - 3} more
-          </div>
-        )}
       </div>
     );
   };

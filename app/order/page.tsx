@@ -59,6 +59,17 @@ export default function OrderFormPage() {
   // Order receipt states
   const [showReceipt, setShowReceipt] = useState(false);
   const [orderData, setOrderData] = useState<any>(null);
+  const [waConfirmed, setWaConfirmed] = useState(false);
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      message.success("Nomor rekening disalin");
+    } catch (error) {
+      console.error("Failed to copy text:", error);
+      message.error("Gagal menyalin nomor rekening");
+    }
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -133,6 +144,14 @@ export default function OrderFormPage() {
       message.error("Mohon isi semua field yang wajib");
       return;
     }
+    const [hours, minutes] = formData.jam.split(":").map((value) => Number(value));
+    const pickupMinutes = hours * 60 + minutes;
+    const minMinutes = 8 * 60;
+    const maxMinutes = 19 * 60;
+    if (Number.isNaN(pickupMinutes) || pickupMinutes < minMinutes || pickupMinutes > maxMinutes) {
+      message.error("Jam pengambilan hanya tersedia 08.00 - 19.00");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -185,6 +204,10 @@ export default function OrderFormPage() {
             price: selectedProduct.price,
           },
         ],
+        addons: {
+          greeting_card: formData.addons.greeting_card,
+          stick_card: formData.addons.stick_card,
+        },
         deliveryMethod: formData.metode === "AMBIL_SENDIRI" ? "PICKUP" : "DELIVERY",
         pickupDate: new Date(`${formData.tanggal}T${formData.jam}`),
         pickupTime: formData.jam,
@@ -203,16 +226,21 @@ export default function OrderFormPage() {
       if (res.ok) {
         const newOrder = await res.json();
 
+        // Extract pickup code from notes
+        const pickupCodeMatch = newOrder.notes?.match(/Pickup Code: (OS-\d+)/);
+        const pickupCode = pickupCodeMatch ? pickupCodeMatch[1] : "OS-00";
+
         // Store order data for receipt display
         setOrderData({
           orderNumber: newOrder.orderNumber,
-          pickupCode: newOrder.id.substring(0, 8).toUpperCase(),
+          pickupCode,
           nama: formData.nama,
           no_telepon: formData.no_telepon,
           metode: formData.metode === "AMBIL_SENDIRI" ? "Ambil Sendiri (Self Pickup)" : "Pickup Gojek",
           tanggal: formData.tanggal,
           jam: formData.jam,
           jenis: selectedProduct?.name || "",
+          pesan: formData.pesan,
           pesanKartu: formData.wish_card,
           hargaBuket: selectedProduct?.price || 0,
           addonCard: formData.addons.greeting_card,
@@ -221,6 +249,7 @@ export default function OrderFormPage() {
         });
 
         setShowReceipt(true);
+        setWaConfirmed(false);
         message.success("Pesanan berhasil dibuat!");
 
         // Reset form
@@ -361,7 +390,7 @@ export default function OrderFormPage() {
                 <label className="block text-sm font-medium mb-1">
                   Jam Pengambilan <span className="text-red-500">*</span>
                 </label>
-                <input type="time" name="jam" value={formData.jam} onChange={handleInputChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600" required />
+                <input type="time" name="jam" value={formData.jam} onChange={handleInputChange} min="08:00" max="19:00" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600" required />
               </div>
             </div>
 
@@ -387,7 +416,7 @@ export default function OrderFormPage() {
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" name="stick_card" checked={formData.addons.stick_card} onChange={handleInputChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
-                <span>Stick Card (+Rp 3.000)</span>
+                <span>Stick Card (+Rp 5.000)</span>
               </label>
             </div>
 
@@ -412,7 +441,12 @@ export default function OrderFormPage() {
                   <h1 className="text-3xl md:text-4xl font-bold text-blue-700">Nota Pesanan 💐</h1>
                   <p className="text-gray-600 mt-2">Pesanan Anda berhasil diterima!</p>
                 </div>
-                <button onClick={() => setShowReceipt(false)} className="text-2xl text-gray-400 hover:text-gray-600">
+                <button
+                  onClick={() => {
+                    if (waConfirmed) setShowReceipt(false);
+                  }}
+                  className={`text-2xl ${waConfirmed ? "text-gray-400 hover:text-gray-600" : "text-gray-300 cursor-not-allowed"}`}
+                >
                   ×
                 </button>
               </div>
@@ -463,6 +497,12 @@ export default function OrderFormPage() {
                       <span className="text-gray-600">Produk</span>
                       <span className="font-semibold text-right max-w-[200px]">{orderData.jenis}</span>
                     </div>
+                    {orderData.pesan && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Deskripsi</span>
+                        <span className="font-semibold text-right max-w-[200px] line-clamp-2">{orderData.pesan}</span>
+                      </div>
+                    )}
                     {orderData.pesanKartu && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">Pesan Kartu</span>
@@ -485,7 +525,7 @@ export default function OrderFormPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Stick Card</span>
-                      <span className="font-semibold">{orderData.addonStick ? "Ya (+Rp3.000)" : "Tidak"}</span>
+                      <span className="font-semibold">{orderData.addonStick ? "Ya (+Rp5.000)" : "Tidak"}</span>
                     </div>
                   </div>
                 </div>
@@ -500,7 +540,7 @@ export default function OrderFormPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Add-on</span>
-                      <span className="font-semibold">Rp {((orderData.addonCard ? 5000 : 0) + (orderData.addonStick ? 3000 : 0)).toLocaleString()}</span>
+                      <span className="font-semibold">Rp {((orderData.addonCard ? 5000 : 0) + (orderData.addonStick ? 5000 : 0)).toLocaleString()}</span>
                     </div>
                     <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between">
                       <span className="font-semibold text-gray-800">Total</span>
@@ -517,16 +557,42 @@ export default function OrderFormPage() {
                   Untuk <span className="font-semibold">Ambil Sendiri</span>, tunjukkan kode ambil saat datang. Untuk <span className="font-semibold">Pickup Gojek</span>, kirim pesan ini ke kurir.
                 </p>
               </div>
+              {/* Payment Instructions */}
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg mb-6 text-sm text-emerald-800">
+                <p className="font-semibold mb-1">💳 Instruksi Pembayaran</p>
+                <p className="mb-2 text-lg font-bold text-red-600">Total: Rp {orderData.totalAmount.toLocaleString()}</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <p>BCA 3251609134</p>
+                    <button type="button" onClick={() => handleCopy("3251609134")} className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold">
+                      Salin
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <p>BSI 7310638007</p>
+                    <button type="button" onClick={() => handleCopy("7310638007")} className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold">
+                      Salin
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <p>SeaBank 901643060605</p>
+                    <button type="button" onClick={() => handleCopy("901643060605")} className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold">
+                      Salin
+                    </button>
+                  </div>
+                  <p>A/N Lathafanny Tsamara</p>
+                </div>
+                <p className="mt-3 text-red-600">Mohon kirimkan bukti transfer setelah melakukan pembayaran dan konfirmasi ke WhatsApp. Jika tidak konfirmasi, pesanan tidak diproses. Terima kasih.</p>
+              </div>
 
               {/* Actions */}
               <div className="flex gap-3">
-                <button onClick={() => window.print()} className="flex-1 px-4 py-3 bg-gray-900 hover:bg-black text-white font-semibold rounded-lg transition">
-                  🖨️ Download/Print
-                </button>
                 <button
                   onClick={() => {
-                    const msg = `Halo, saya mau konfirmasi pesanan.\n\nNo Order: ${orderData.orderNumber}\nKode Ambil: ${orderData.pickupCode}\nNama: ${orderData.nama}\nProduk: ${orderData.jenis}\nMetode: ${orderData.metode}\nJadwal: ${orderData.tanggal} ${orderData.jam}\n\nTerima kasih.`;
-                    window.open(`https://wa.me/6285732286669?text=${encodeURIComponent(msg)}`, "_blank");
+                    const descriptionLine = `Deskripsi: ${orderData.pesan || "-"}`;
+                    const messageBody = `Halo, saya mau konfirmasi pesanan.\n\nNo Order: ${orderData.orderNumber}\nKode Ambil: ${orderData.pickupCode}\nNama: ${orderData.nama}\nProduk: ${orderData.jenis}\nMetode: ${orderData.metode}\nJadwal: ${orderData.tanggal} ${orderData.jam}\n${descriptionLine}\nTotal: Rp ${orderData.totalAmount.toLocaleString()}\n\nPembayaran via Transfer:\n- BCA 3251609134\n- BSI 7310638007\n- SeaBank 901643060605\nA/N Lathafanny Tsamara\n\nMohon kirimkan bukti transfer setelah melakukan pembayaran. Terima kasih! 💐`;
+                    window.open(`https://wa.me/6285732286669?text=${encodeURIComponent(messageBody)}`, "_blank");
+                    setWaConfirmed(true);
                   }}
                   className="flex-1 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition"
                 >
@@ -534,9 +600,20 @@ export default function OrderFormPage() {
                 </button>
               </div>
 
-              <button onClick={() => setShowReceipt(false)} className="w-full mt-3 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition">
+              <button
+                onClick={() => {
+                  if (waConfirmed) setShowReceipt(false);
+                }}
+                disabled={!waConfirmed}
+                className={`w-full mt-3 px-4 py-3 font-semibold rounded-lg transition ${
+                  waConfirmed ? "bg-gray-200 hover:bg-gray-300 text-gray-800" : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                }`}
+              >
                 Tutup
               </button>
+              {!waConfirmed && (
+                <p className="mt-2 text-xs text-gray-500 text-center">Klik "Konfirmasi WA" untuk kirim bukti transfer sebelum menutup nota.</p>
+              )}
             </div>
           </div>
         </div>
