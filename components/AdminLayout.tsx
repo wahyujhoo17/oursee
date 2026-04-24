@@ -2,26 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Layout, Menu, Avatar, Dropdown, Space, Button, Drawer } from "antd";
-import {
-  DashboardOutlined,
-  ShoppingOutlined,
-  ShoppingCartOutlined,
-  CalendarOutlined,
-  UserOutlined,
-  LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
+import { DashboardOutlined, ShoppingOutlined, ShoppingCartOutlined, CalendarOutlined, DollarOutlined, UserOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined, FormOutlined, GiftOutlined } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 const { Header, Sider, Content } = Layout;
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -54,6 +41,21 @@ export default function AdminLayout({
       key: "/fn-admin/orders",
       icon: <ShoppingCartOutlined />,
       label: "Orders",
+    },
+    {
+      key: "/fn-admin/orders/manual",
+      icon: <FormOutlined />,
+      label: "Pemesanan Manual",
+    },
+    {
+      key: "/fn-admin/stok-hampers",
+      icon: <GiftOutlined />,
+      label: "Stok Hampers",
+    },
+    {
+      key: "/fn-admin/expenses",
+      icon: <DollarOutlined />,
+      label: "Pengeluaran",
     },
     {
       key: "/fn-admin/calendar",
@@ -112,30 +114,13 @@ export default function AdminLayout({
           >
             {collapsed ? "OS" : "Oursee Admin"}
           </div>
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={[pathname]}
-            items={menuItems}
-            onClick={({ key }) => handleMenuClick(key)}
-          />
+          <Menu theme="dark" mode="inline" selectedKeys={[pathname]} items={menuItems} onClick={({ key }) => handleMenuClick(key)} />
         </Sider>
       )}
 
       {/* Mobile Drawer */}
-      <Drawer
-        title="Oursee Admin"
-        placement="left"
-        onClose={() => setMobileDrawerOpen(false)}
-        open={mobileDrawerOpen}
-        styles={{ body: { padding: 0 } }}
-      >
-        <Menu
-          mode="inline"
-          selectedKeys={[pathname]}
-          items={menuItems}
-          onClick={({ key }) => handleMenuClick(key)}
-        />
+      <Drawer title="Oursee Admin" placement="left" onClose={() => setMobileDrawerOpen(false)} open={mobileDrawerOpen} styles={{ body: { padding: 0 } }}>
+        <Menu mode="inline" selectedKeys={[pathname]} items={menuItems} onClick={({ key }) => handleMenuClick(key)} />
       </Drawer>
 
       <Layout style={{ marginLeft: isMobile ? 0 : collapsed ? 80 : 200 }}>
@@ -166,10 +151,7 @@ export default function AdminLayout({
           />
           <Dropdown menu={{ items: userMenuItems }}>
             <Space style={{ cursor: "pointer" }}>
-              <Avatar
-                icon={<UserOutlined />}
-                size={isMobile ? "small" : "default"}
-              />
+              <Avatar icon={<UserOutlined />} size={isMobile ? "small" : "default"} />
               {!isMobile && <span>Admin</span>}
             </Space>
           </Dropdown>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Table, Tag, Space, Button, Modal, Descriptions, Select, message, DatePicker, Row, Col, Input } from "antd";
-import { EyeOutlined, EditOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined, FormOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 
@@ -263,20 +263,36 @@ export default function AdminOrdersPage() {
     <div className="px-2 sm:px-0">
       <div className="flex justify-between items-center mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl font-bold">Orders Management</h1>
-        <Link href="/fn-admin/orders/create">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            className="border-0 shadow-lg"
-            style={{
-              background: "linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)",
-              color: "#00008B",
-            }}
-            size="large"
-          >
-            Buat Pesanan Baru
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/fn-admin/orders/manual">
+            <Button
+              type="default"
+              icon={<FormOutlined />}
+              className="border-0 shadow-lg"
+              style={{
+                background: "linear-gradient(135deg, #fda4af 0%, #f0abfc 100%)",
+                color: "#9f1239",
+              }}
+              size="large"
+            >
+              Form Manual
+            </Button>
+          </Link>
+          <Link href="/fn-admin/orders/create">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              className="border-0 shadow-lg"
+              style={{
+                background: "linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%)",
+                color: "#00008B",
+              }}
+              size="large"
+            >
+              Buat Pesanan Baru
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex justify-end gap-2 mb-4">

@@ -132,3 +132,40 @@ model OrderItem {
 
   @@map("order_items")
 }
+
+model Expense {
+  id            String   @id @default(cuid())
+  expenseDate   DateTime
+  category      String
+  description   String
+  amount        Float
+  paymentMethod String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("expenses")
+}
+
+model OpeningBalance {
+  id              String   @id @default(cuid())
+  amount          Float
+  date            DateTime
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("opening_balances")
+}
+
+model HampersItem {
+  id          String   @id @default(cuid())
+  name        String
+  category    String   // PIRING, CANGKIR, MANGKOK
+  stock       Int      @default(0)
+  unit        String   @default("pcs")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("hampers_items")
+}
