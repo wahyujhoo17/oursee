@@ -215,35 +215,46 @@ export default function Home({ fadeIn }: HomeProps) {
     <div className={`font-jakarta bg-white text-gray-900 transition-opacity duration-700 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
       <Navbar />
 
-      <section className="bg-white pt-24 pb-16">
-        <div className="max-w-4xl mx-auto px-6 text-center text-black">
+      <section className="bg-white pt-24 pb-16 relative overflow-hidden">
+        {/* LEFT SVG */}
+        <Image src="/assets/kiri.svg" alt="left decoration" width={360} height={360} className="hidden md:block absolute left-10 top-1/2 -translate-y-1/2 w-[280px] h-auto opacity-100 z-0 pointer-events-none" priority />
+
+        {/* RIGHT SVG */}
+        <Image src="/assets/kanan.svg" alt="right decoration" width={360} height={360} className="hidden md:block absolute right-10 top-1/2 -translate-y-1/2 w-[280px] h-auto opacity-100 z-0 pointer-events-none" priority />
+
+        <div className="max-w-4xl mx-auto px-6 text-center text-black relative z-10">
           <h1 className="text-3xl md:text-5xl font-serif font-bold leading-snug space-y-1">
             <span className="block">
               TRANSFORMING
               <span className="font-citadel italic font-normal" style={{ color: "#162E93" }}>
+                {" "}
                 Floral Dreams
               </span>
             </span>
+
             <span className="block">INTO LUXURIOUS REALITY</span>
+
             <span className="block">
               FOR
               <span className="font-citadel italic font-normal" style={{ color: "#162E93" }}>
+                {" "}
                 Unforgettable
               </span>
             </span>
+
             <span className="block">WEDDINGS & EVENTS</span>
           </h1>
 
           <p className="mt-6 text-base text-gray-600">Elegantly curated floral experiences designed to captivate and inspire.</p>
 
           <div className="mt-8">
-            <a href="#produk" className="px-6 py-3 transition text-white font-semibold rounded-full" style={{ backgroundColor: "#162E93" }}>
+            <a href="#produk" className="px-6 py-3 transition text-white font-semibold rounded-full hover:opacity-80" style={{ backgroundColor: "#162E93" }}>
               Discover More
             </a>
           </div>
         </div>
       </section>
-
+      
       <section className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid md:grid-cols-2 gap-8 items-center">
           <div>
