@@ -60,14 +60,17 @@ export async function PUT(
     }
 
     // Extract file keys from old images that will be removed
-    const oldImageUrls = existingProduct.images.map((img) => img.imageUrl);
-    const newImageUrls = images?.map((img: any) => img.url) || [];
+    const oldImageUrls: string[] = existingProduct.images.map(
+      (img: { imageUrl: string }) => img.imageUrl,
+    );
+    const newImageUrls: string[] =
+      images?.map((img: { url: string }) => img.url) || [];
     const removedImageUrls = oldImageUrls.filter(
-      (url) => !newImageUrls.includes(url),
+      (url: string) => !newImageUrls.includes(url),
     );
 
     const fileKeysToDelete = removedImageUrls
-      .map((url) => {
+      .map((url: string) => {
         const match = url.match(/\/f\/([^\/]+)$/);
         return match ? match[1] : null;
       })
@@ -186,14 +189,14 @@ export async function DELETE(
     }
 
     // Extract file keys from image URLs
-    const fileKeys = product.images
-      .map((img) => {
+    const fileKeys: string[] = product.images
+      .map((img: { imageUrl: string }) => {
         // Extract key from UploadThing URL
         // URL format: https://utfs.io/f/{fileKey}
         const match = img.imageUrl.match(/\/f\/([^\/]+)$/);
         return match ? match[1] : null;
       })
-      .filter((key): key is string => key !== null);
+      .filter((key: string | null): key is string => key !== null);
 
     // Delete product from database (will cascade delete images)
     await prisma.product.delete({
