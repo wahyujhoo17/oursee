@@ -109,12 +109,7 @@ export default function Home({ fadeIn }: HomeProps) {
   };
 
   const nextImage = () => {
-    if (
-      selectedProduct &&
-      selectedProduct.images &&
-      selectedProduct.images.length > 0 &&
-      currentImageIndex < selectedProduct.images.length - 1
-    ) {
+    if (selectedProduct && selectedProduct.images && selectedProduct.images.length > 0 && currentImageIndex < selectedProduct.images.length - 1) {
       setCurrentImageIndex(currentImageIndex + 1);
       setModalImageLoading(true);
     }
@@ -260,7 +255,7 @@ export default function Home({ fadeIn }: HomeProps) {
   };
   return (
     <div className={`font-jakarta bg-white text-gray-900 transition-opacity duration-700 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
-      <Navbar />
+      <Navbar cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)} onCartOpen={() => setIsCartOpen(true)} />
 
       <section className="bg-white pt-24 pb-16 relative overflow-hidden">
         {/* LEFT SVG */}
@@ -273,10 +268,7 @@ export default function Home({ fadeIn }: HomeProps) {
           <h1 className="text-3xl md:text-5xl font-serif font-bold leading-snug space-y-1">
             <span className="block">
               TRANSFORMING
-              <span
-                className="font-citadel italic font-normal"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-citadel italic font-normal" style={{ color: "#162E93" }}>
                 {" "}
                 Floral Dreams
               </span>
@@ -286,10 +278,7 @@ export default function Home({ fadeIn }: HomeProps) {
 
             <span className="block">
               FOR
-              <span
-                className="font-citadel italic font-normal"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-citadel italic font-normal" style={{ color: "#162E93" }}>
                 {" "}
                 Unforgettable
               </span>
@@ -298,17 +287,10 @@ export default function Home({ fadeIn }: HomeProps) {
             <span className="block">WEDDINGS & EVENTS</span>
           </h1>
 
-          <p className="mt-6 text-base text-gray-600">
-            Elegantly curated floral experiences designed to captivate and
-            inspire.
-          </p>
+          <p className="mt-6 text-base text-gray-600">Elegantly curated floral experiences designed to captivate and inspire.</p>
 
           <div className="mt-8">
-            <a
-              href="#produk"
-              className="px-6 py-3 transition text-white font-semibold rounded-full hover:opacity-80"
-              style={{ backgroundColor: "#162E93" }}
-            >
+            <a href="#produk" className="px-6 py-3 transition text-white font-semibold rounded-full hover:opacity-80" style={{ backgroundColor: "#162E93" }}>
               Discover More
             </a>
           </div>
@@ -320,56 +302,34 @@ export default function Home({ fadeIn }: HomeProps) {
           <div>
             <h1 className="text-[2.3rem] md:text-[2.9rem] leading-snug">
               <span className="font-citadel text-gray-700">Elevating</span>
-              <span
-                className="font-serif font-bold"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-serif font-bold" style={{ color: "#162E93" }}>
                 {" "}
                 YOUR
               </span>
               <span className="block -mt-2" />
-              <span
-                className="font-serif font-bold"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-serif font-bold" style={{ color: "#162E93" }}>
                 EVENTS WITH
               </span>
               <span className="block -mt-2" />
               <span className="font-citadel text-gray-700">Bespoke</span>
-              <span
-                className="font-serif font-bold"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-serif font-bold" style={{ color: "#162E93" }}>
                 {" "}
                 FLORAL
               </span>
               <span className="block -mt-2" />
-              <span
-                className="font-serif font-bold"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-serif font-bold" style={{ color: "#162E93" }}>
                 DESIGN
               </span>
             </h1>
 
-            <p className="mt-4 text-gray-600 text-[1rem]">
-              Desain bunga artistik yang disesuaikan untuk setiap acara spesial
-              Anda.
-            </p>
+            <p className="mt-4 text-gray-600 text-[1rem]">Desain bunga artistik yang disesuaikan untuk setiap acara spesial Anda.</p>
 
             <div className="mt-6 flex gap-4">
-              <a
-                href="#produk"
-                className="px-7 py-3 text-white rounded-full font-semibold text-sm transition-all duration-300 hover:scale-105 active:scale-95"
-                style={{ backgroundColor: "#162E93" }}
-              >
+              <a href="#produk" className="px-7 py-3 text-white rounded-full font-semibold text-sm transition-all duration-300 hover:scale-105 active:scale-95" style={{ backgroundColor: "#162E93" }}>
                 Lihat Koleksi
               </a>
 
-              <a
-                href="#order"
-                className="px-7 py-3 border border-black text-black rounded-full font-semibold text-sm hover:bg-black hover:text-white transition-all duration-300 hover:scale-105 active:scale-95"
-              >
+              <a href="#order" className="px-7 py-3 border border-black text-black rounded-full font-semibold text-sm hover:bg-black hover:text-white transition-all duration-300 hover:scale-105 active:scale-95">
                 Pesan
               </a>
             </div>
@@ -386,10 +346,7 @@ export default function Home({ fadeIn }: HomeProps) {
           <div className="mb-12 text-center">
             <h2 className="text-4xl md:text-6xl font-serif font-bold text-black inline-block tracking-wide">
               New
-              <span
-                className="font-citadel italic font-normal"
-                style={{ color: "#162E93" }}
-              >
+              <span className="font-citadel italic font-normal" style={{ color: "#162E93" }}>
                 Product
               </span>
             </h2>
@@ -412,8 +369,7 @@ export default function Home({ fadeIn }: HomeProps) {
               </div>
             ) : (
               currentProducts.map((item: Product) => {
-                const mainImage =
-                  item.images.find((img) => img.isMain) || item.images[0];
+                const mainImage = item.images.find((img) => img.isMain) || item.images[0];
                 const isLoading = loadingImages[item.id] !== false;
 
                 return (
@@ -429,9 +385,7 @@ export default function Home({ fadeIn }: HomeProps) {
                       </div>
                     )}
 
-                    <div
-                      className={`transition-opacity duration-300 rounded-xl overflow-hidden ${isLoading ? "opacity-0" : "opacity-100"}`}
-                    >
+                    <div className={`transition-opacity duration-300 rounded-xl overflow-hidden ${isLoading ? "opacity-0" : "opacity-100"}`}>
                       {mainImage && (
                         <Image
                           src={mainImage.imageUrl}
@@ -456,8 +410,6 @@ export default function Home({ fadeIn }: HomeProps) {
                       <>
                         <h3 className="mt-4 font-semibold text-lg text-gray-900">{item.name}</h3>
 
-                        {item.description && <p className="mt-2 text-xs text-gray-500 line-clamp-2 px-2">{item.description.length > 80 ? item.description.substring(0, 80) + "..." : item.description}</p>}
-
                         {item.categories.length > 0 && (
                           <div className="flex flex-wrap gap-1 justify-center mt-2">
                             {item.categories.slice(0, 2).map((pc) => (
@@ -476,15 +428,24 @@ export default function Home({ fadeIn }: HomeProps) {
                           </div>
                         )}
 
-                        <p className="text-gray-600 mt-2">
-                          {item.price
-                            ? `Rp ${item.price.toLocaleString()}`
-                            : "Hubungi kami"}
-                        </p>
+                        <p className="text-gray-600 mt-2">{item.price ? `Rp ${item.price.toLocaleString()}` : "Hubungi kami"}</p>
 
-                        <a href="#order" className="mt-3 inline-block px-5 py-2 border rounded-full hover:text-white transition" style={{ borderColor: "#162E93", color: "#162E93" }} onClick={(e) => e.stopPropagation()}>
-                          Add to bag
-                        </a>
+                        <div className="flex items-center justify-center gap-2 mt-3">
+                          <button onClick={(e) => addToCart(e, item)} className="p-2 rounded-full border transition hover:bg-[#162E93] hover:text-white group" style={{ borderColor: "#162E93", color: "#162E93" }} title="Tambah ke keranjang">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                          </button>
+                          <button onClick={(e) => handleShare(e, item)} className="p-2 rounded-full border transition hover:bg-[#162E93] hover:text-white" style={{ borderColor: "#162E93", color: "#162E93" }} title="Bagikan produk">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                              />
+                            </svg>
+                          </button>
+                        </div>
                       </>
                     )}
                   </div>
@@ -496,22 +457,14 @@ export default function Home({ fadeIn }: HomeProps) {
           {totalPages > 1 && (
             <>
               <div className="flex justify-center items-center gap-3 mt-12">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className="p-2 text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed"
-                  style={{ color: currentPage === 1 ? undefined : "#162E93" }}
-                >
+                <button onClick={handlePrevPage} disabled={currentPage === 1} className="p-2 text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed" style={{ color: currentPage === 1 ? undefined : "#162E93" }}>
                   &lt;
                 </button>
 
                 {getVisiblePages().map((page, index) => {
                   if (page === "...") {
                     return (
-                      <span
-                        key={`ellipsis-${index}`}
-                        className="px-2 text-gray-400"
-                      >
+                      <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
                         ...
                       </span>
                     );
@@ -529,74 +482,16 @@ export default function Home({ fadeIn }: HomeProps) {
                     >
                       {isActive ? (
                         <span className="relative inline-flex items-center justify-center w-10 h-10">
-                          <svg
-                            className="absolute inset-0 w-full h-full"
-                            viewBox="0 0 100 100"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle
-                              cx="50"
-                              cy="20"
-                              r="18"
-                              fill="#162E93"
-                              opacity="0.8"
-                            />
-                            <circle
-                              cx="80"
-                              cy="50"
-                              r="18"
-                              fill="#162E93"
-                              opacity="0.8"
-                            />
-                            <circle
-                              cx="50"
-                              cy="80"
-                              r="18"
-                              fill="#162E93"
-                              opacity="0.8"
-                            />
-                            <circle
-                              cx="20"
-                              cy="50"
-                              r="18"
-                              fill="#162E93"
-                              opacity="0.8"
-                            />
-                            <circle
-                              cx="73"
-                              cy="27"
-                              r="15"
-                              fill="#162E93"
-                              opacity="0.7"
-                            />
-                            <circle
-                              cx="73"
-                              cy="73"
-                              r="15"
-                              fill="#162E93"
-                              opacity="0.7"
-                            />
-                            <circle
-                              cx="27"
-                              cy="73"
-                              r="15"
-                              fill="#162E93"
-                              opacity="0.7"
-                            />
-                            <circle
-                              cx="27"
-                              cy="27"
-                              r="15"
-                              fill="#162E93"
-                              opacity="0.7"
-                            />
-                            <circle
-                              cx="50"
-                              cy="50"
-                              r="26"
-                              fill="#162E93"
-                              opacity="0.9"
-                            />
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="20" r="18" fill="#162E93" opacity="0.8" />
+                            <circle cx="80" cy="50" r="18" fill="#162E93" opacity="0.8" />
+                            <circle cx="50" cy="80" r="18" fill="#162E93" opacity="0.8" />
+                            <circle cx="20" cy="50" r="18" fill="#162E93" opacity="0.8" />
+                            <circle cx="73" cy="27" r="15" fill="#162E93" opacity="0.7" />
+                            <circle cx="73" cy="73" r="15" fill="#162E93" opacity="0.7" />
+                            <circle cx="27" cy="73" r="15" fill="#162E93" opacity="0.7" />
+                            <circle cx="27" cy="27" r="15" fill="#162E93" opacity="0.7" />
+                            <circle cx="50" cy="50" r="26" fill="#162E93" opacity="0.9" />
                           </svg>
                           <span className="relative z-10">{pageNum}</span>
                         </span>
@@ -687,20 +582,19 @@ export default function Home({ fadeIn }: HomeProps) {
             </div>
           </div>
 
-            <div className="bg-white border-2 rounded-xl p-10 text-center" style={{ borderColor: "#162E93" }}>
-              <p className="text-2xl font-bold leading-relaxed mb-4" style={{ color: "#162E93" }}>
-                BUKET BUNGA & SESERAHAN OURSEE.CO
-              </p>
-              <p className="text-gray-700 text-lg leading-relaxed">
-                Karang Empat IX No.34 <br />
-                Surabaya, Indonesia
-              </p>
-              <p className="text-lg">
-                <a href="https://wa.me/6285732286669?text=Halo%20Oursee.co,%20saya%20ingin%20memesan%20buket%20bunga." target="_blank" rel="noopener noreferrer" className="text-red-800 hover:underline font-medium">
-                  0857-3228-6669
-                </a>
-              </li>
-            </ul>
+          <div className="bg-white border-2 rounded-xl p-10 text-center" style={{ borderColor: "#162E93" }}>
+            <p className="text-2xl font-bold leading-relaxed mb-4" style={{ color: "#162E93" }}>
+              BUKET BUNGA & SESERAHAN OURSEE.CO
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed">
+              Karang Empat IX No.34 <br />
+              Surabaya, Indonesia
+            </p>
+            <p className="text-lg">
+              <a href="https://wa.me/6285732286669?text=Halo%20Oursee.co,%20saya%20ingin%20memesan%20buket%20bunga." target="_blank" rel="noopener noreferrer" className="text-red-800 hover:underline font-medium">
+                0857-3228-6669
+              </a>
+            </p>
           </div>
         </div>
 
@@ -717,23 +611,12 @@ export default function Home({ fadeIn }: HomeProps) {
 
       {/* Product Detail Modal */}
       {isModalOpen && selectedProduct && (
-        <div
-          className="fixed inset-0 bg-gray-900 bg-opacity-10 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-10 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={closeModal}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b border-gray-100">
-              <h2 className="text-3xl font-serif font-bold text-gray-900">
-                Detail Produk
-              </h2>
-              <button
-                onClick={closeModal}
-                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 text-xl"
-              >
+              <h2 className="text-3xl font-serif font-bold text-gray-900">Detail Produk</h2>
+              <button onClick={closeModal} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 text-xl">
                 ×
               </button>
             </div>
@@ -747,145 +630,99 @@ export default function Home({ fadeIn }: HomeProps) {
                       {modalImageLoading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
                           <div className="w-32 h-32">
-                            <Lottie
-                              animationData={loadingAnimation}
-                              loop={true}
-                            />
+                            <Lottie animationData={loadingAnimation} loop={true} />
                           </div>
                         </div>
                       )}
-                      {selectedProduct.images &&
-                        selectedProduct.images.length > 0 && (
-                          <Image
-                            src={
-                              selectedProduct.images[currentImageIndex].imageUrl
-                            }
-                            alt={selectedProduct.name}
-                            width={600}
-                            height={600}
-                            className="w-full h-full object-contain"
-                            onLoad={() => setModalImageLoading(false)}
-                          />
-                        )}
+                      {selectedProduct.images && selectedProduct.images.length > 0 && (
+                        <Image src={selectedProduct.images[currentImageIndex].imageUrl} alt={selectedProduct.name} width={600} height={600} className="w-full h-full object-contain" onLoad={() => setModalImageLoading(false)} />
+                      )}
 
                       {/* Navigation Buttons */}
-                      {selectedProduct.images &&
-                        selectedProduct.images.length > 1 && (
-                          <>
-                            <button
-                              onClick={prevImage}
-                              disabled={currentImageIndex === 0}
-                              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-lg flex items-center justify-center text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed z-20"
-                            >
-                              ‹
-                            </button>
-                            <button
-                              onClick={nextImage}
-                              disabled={
-                                currentImageIndex ===
-                                selectedProduct.images.length - 1
-                              }
-                              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-lg flex items-center justify-center text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed z-20"
-                            >
-                              ›
-                            </button>
+                      {selectedProduct.images && selectedProduct.images.length > 1 && (
+                        <>
+                          <button
+                            onClick={prevImage}
+                            disabled={currentImageIndex === 0}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-lg flex items-center justify-center text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed z-20"
+                          >
+                            ‹
+                          </button>
+                          <button
+                            onClick={nextImage}
+                            disabled={currentImageIndex === selectedProduct.images.length - 1}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full shadow-lg flex items-center justify-center text-gray-800 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed z-20"
+                          >
+                            ›
+                          </button>
 
-                            {/* Image Counter */}
-                            <div className="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm z-20">
-                              {currentImageIndex + 1} /{" "}
-                              {selectedProduct.images.length}
-                            </div>
-                          </>
-                        )}
+                          {/* Image Counter */}
+                          <div className="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm z-20">
+                            {currentImageIndex + 1} / {selectedProduct.images.length}
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* Thumbnail Navigation */}
-                    {selectedProduct.images &&
-                      selectedProduct.images.length > 1 && (
-                        <div className="grid grid-cols-4 gap-3">
-                          {selectedProduct.images.map((image, index) => (
-                            <div
-                              key={index}
-                              onClick={() => goToImage(index)}
-                              className={`aspect-square overflow-hidden transition-all cursor-pointer ${currentImageIndex === index ? "ring-4 ring-blue-500 opacity-100" : "opacity-60 hover:opacity-100"}`}
-                            >
-                              <Image
-                                src={image.imageUrl}
-                                alt={`Product view ${index + 1}`}
-                                width={120}
-                                height={120}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                    {selectedProduct.images && selectedProduct.images.length > 1 && (
+                      <div className="grid grid-cols-4 gap-3">
+                        {selectedProduct.images.map((image, index) => (
+                          <div
+                            key={index}
+                            onClick={() => goToImage(index)}
+                            className={`aspect-square overflow-hidden transition-all cursor-pointer ${currentImageIndex === index ? "ring-4 ring-blue-500 opacity-100" : "opacity-60 hover:opacity-100"}`}
+                          >
+                            <Image src={image.imageUrl} alt={`Product view ${index + 1}`} width={120} height={120} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Product Details */}
                 <div className="p-8 space-y-6">
                   <div>
-                    <h3 className="text-4xl font-serif font-bold text-gray-900 mb-6 leading-tight">
-                      {selectedProduct.name}
-                    </h3>
+                    <h3 className="text-4xl font-serif font-bold text-gray-900 mb-6 leading-tight">{selectedProduct.name}</h3>
 
-                    {selectedProduct.categories &&
-                      selectedProduct.categories.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-6">
-                          {selectedProduct.categories.map((pc) => (
-                            <span
-                              key={pc.id}
-                              className="px-3 py-1 text-sm rounded-full"
-                              style={{
-                                backgroundColor: "#e7eafd",
-                                color: "#162E93",
-                              }}
-                            >
-                              {pc.category.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                    {selectedProduct.categories && selectedProduct.categories.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {selectedProduct.categories.map((pc) => (
+                          <span
+                            key={pc.id}
+                            className="px-3 py-1 text-sm rounded-full"
+                            style={{
+                              backgroundColor: "#e7eafd",
+                              color: "#162E93",
+                            }}
+                          >
+                            {pc.category.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Price */}
-                    <div
-                      className="text-3xl font-bold mb-6"
-                      style={{ color: "#162E93" }}
-                    >
-                      {selectedProduct.price
-                        ? `Rp ${selectedProduct.price.toLocaleString()}`
-                        : "Hubungi kami"}
+                    <div className="text-3xl font-bold mb-6" style={{ color: "#162E93" }}>
+                      {selectedProduct.price ? `Rp ${selectedProduct.price.toLocaleString()}` : "Hubungi kami"}
                     </div>
 
                     {/* Description */}
                     {selectedProduct.description && (
                       <div className="space-y-4">
                         <div className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
-                          {showFullDescription
-                            ? selectedProduct.description
-                            : selectedProduct.description.length > 150
-                              ? selectedProduct.description.substring(0, 150) +
-                                "..."
-                              : selectedProduct.description}
+                          {showFullDescription ? selectedProduct.description : selectedProduct.description.length > 150 ? selectedProduct.description.substring(0, 150) + "..." : selectedProduct.description}
                         </div>
 
-                        {selectedProduct.description.length > 150 &&
-                          !showFullDescription && (
-                            <button
-                              onClick={() => setShowFullDescription(true)}
-                              className="font-medium hover:underline transition-colors"
-                              style={{ color: "#162E93" }}
-                            >
-                              Lihat semua deskripsi
-                            </button>
-                          )}
+                        {selectedProduct.description.length > 150 && !showFullDescription && (
+                          <button onClick={() => setShowFullDescription(true)} className="font-medium hover:underline transition-colors" style={{ color: "#162E93" }}>
+                            Lihat semua deskripsi
+                          </button>
+                        )}
 
                         {showFullDescription && (
-                          <button
-                            onClick={() => setShowFullDescription(false)}
-                            className="text-gray-500 hover:text-gray-600 font-medium hover:underline transition-colors"
-                          >
+                          <button onClick={() => setShowFullDescription(false)} className="text-gray-500 hover:text-gray-600 font-medium hover:underline transition-colors">
                             Sembunyikan deskripsi
                           </button>
                         )}
@@ -904,10 +741,7 @@ export default function Home({ fadeIn }: HomeProps) {
                       <span>Pesan via WhatsApp</span>
                     </a>
 
-                    <button
-                      onClick={closeModal}
-                      className="w-full py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
-                    >
+                    <button onClick={closeModal} className="w-full py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
                       Tutup
                     </button>
                   </div>
