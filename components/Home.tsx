@@ -257,14 +257,48 @@ export default function Home({ fadeIn }: HomeProps) {
     <div className={`font-jakarta bg-white text-gray-900 transition-opacity duration-700 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
       <Navbar cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)} onCartOpen={() => setIsCartOpen(true)} />
 
-      <section className="bg-white pt-24 pb-16 relative overflow-hidden">
+      <section className="bg-white py-16 md:py-20 min-h-[520px] md:min-h-[620px] relative overflow-hidden flex items-center">
         {/* LEFT SVG */}
-        <Image src="/assets/kiri.svg" alt="left decoration" width={360} height={360} className="hidden md:block absolute left-10 top-1/2 -translate-y-1/2 w-[280px] h-auto opacity-100 z-0 pointer-events-none" priority />
+        <Image
+          src="/assets/kiri.svg"
+          alt="left decoration"
+          width={360}
+          height={360}
+          className="
+      block 
+      absolute 
+      left-2 md:left-10
+      bottom-10 md:bottom-20
+      w-28 md:w-[280px]
+      h-auto
+      opacity-100
+      z-0
+      pointer-events-none
+    "
+          priority
+        />
 
         {/* RIGHT SVG */}
-        <Image src="/assets/kanan.svg" alt="right decoration" width={360} height={360} className="hidden md:block absolute right-10 top-1/2 -translate-y-1/2 w-[280px] h-auto opacity-100 z-0 pointer-events-none" priority />
+        <Image
+          src="/assets/kanan.svg"
+          alt="right decoration"
+          width={360}
+          height={360}
+          className="
+      block 
+      absolute 
+      right-2 md:right-10
+      bottom-10 md:bottom-20
+      w-28 md:w-[280px]
+      h-auto
+      opacity-100
+      z-0
+      pointer-events-none
+    "
+          priority
+        />
 
-        <div className="max-w-4xl mx-auto px-6 text-center text-black relative z-10">
+        <div className="max-w-4xl mx-auto px-6 text-center text-black relative z-10 md:-translate-y-10">
           <h1 className="text-3xl md:text-5xl font-serif font-bold leading-snug space-y-1">
             <span className="block">
               TRANSFORMING
@@ -352,7 +386,7 @@ export default function Home({ fadeIn }: HomeProps) {
             </h2>
 
             <div className="mt-4">
-              <a href="#all-products" className="px-5 py-1.5 border text-sm rounded-full hover:text-white transition" style={{ borderColor: "#162E93", color: "#162E93" }}>
+              <a href="all-products" className="px-5 py-1.5 border text-sm rounded-full hover:text-white transition" style={{ borderColor: "#162E93", color: "#162E93" }}>
                 see all
               </a>
             </div>

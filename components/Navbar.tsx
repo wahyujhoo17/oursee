@@ -18,7 +18,7 @@ export default function Navbar({ cartCount = 0, onCartOpen }: { cartCount?: numb
         <div className="hidden lg:grid! lg:grid-cols-[1fr_auto_1fr] items-center h-20 gap-8">
           {/* Left Navigation */}
           <nav className="flex gap-6 text-sm text-gray-800">
-            <a href="#home" className="hover:text-black transition-colors whitespace-nowrap">
+            <a href="home" className="hover:text-black transition-colors whitespace-nowrap">
               Home
             </a>
 
