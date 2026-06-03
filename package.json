@@ -8,7 +8,7 @@
     "dev:webpack": "next dev --webpack",
     "dev:turbo": "next dev",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "npx prisma migrate deploy && npx prisma db seed && next start -p 3002",
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts",
     "postinstall": "prisma generate"
