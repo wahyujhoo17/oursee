@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { CartItem } from "./CartDrawer";
 
@@ -35,6 +36,7 @@ const shippingOptions: { key: Shipping; label: string; icon: React.ReactElement 
 ];
 
 export default function CheckoutModal({ isOpen, onClose, items }: CheckoutModalProps) {
+  const router = useRouter();
   const [shipping, setShipping] = useState<Shipping>("self");
   const [additionalItems, setAdditionalItems] = useState({
     wishCard: false,
@@ -77,7 +79,7 @@ export default function CheckoutModal({ isOpen, onClose, items }: CheckoutModalP
     return `Rp ${price.toLocaleString()}`;
   };
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     // Cek field yang belum diisi
     const newErrors: { [key: string]: string } = {};
 
@@ -94,35 +96,66 @@ export default function CheckoutModal({ isOpen, onClose, items }: CheckoutModalP
       return;
     }
 
-    const shippingLabel = shippingOptions.find((opt) => opt.key === shipping)?.label ?? shipping;
-    const itemsText = items.map((item) => `- ${item.name} x${item.quantity}${item.price ? ` (Rp ${(item.price * item.quantity).toLocaleString()})` : ""}`).join("\n");
-    const addonLines = [];
-    if (additionalItems.wishCard) addonLines.push("- Kartu Ucapan Cetak (Rp 5.000)");
-    if (additionalItems.stickCard) addonLines.push("- Stick Card (Rp 5.000)");
+    try {
+      const customerRes = await fetch("/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email: "",
+          phone,
+          address: studio,
+        }),
+      });
 
-    const msg = [
-      "Halo Oursee, saya ingin memesan:",
-      itemsText,
-      "",
-      `Nama: ${name}`,
-      `Telepon: ${phone}`,
-      `Jumlah: ${totalQty}`,
-      `Pengiriman: ${shippingLabel}`,
-      greetingMessage ? `Greeting Message: ${greetingMessage}` : "",
-      additionalRequest ? `Additional Request: ${additionalRequest}` : "",
-      addonLines.length ? "" : "",
-      ...(addonLines.length ? ["Additional Item:", ...addonLines] : []),
-      `Product Subtotal: Rp ${productSubtotal.toLocaleString()}`,
-      `Order Total: Rp ${orderTotal.toLocaleString()}`,
-      pickupDate ? `Tanggal: ${pickupDate}` : "",
-      pickupTime ? `Waktu: ${pickupTime}` : "",
-      studio ? `Studio: ${studio}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
+      if (!customerRes.ok) {
+        throw new Error("Gagal membuat data pelanggan");
+      }
 
-    window.open(`https://wa.me/6285732286669?text=${encodeURIComponent(msg)}`, "_blank");
-    onClose();
+      const customer = await customerRes.json();
+
+      const orderRes = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerId: customer.id,
+          items: items.map((item) => ({
+            productId: item.id,
+            productName: item.name,
+            quantity: item.quantity,
+            price: item.price ?? 0,
+          })),
+          deliveryMethod: shipping === "gosend_customer" ? "DELIVERY" : "PICKUP",
+          pickupDate,
+          pickupTime,
+          recipientName: name,
+          recipientPhone: phone,
+          deliveryAddress: studio,
+          notes: [greetingMessage, additionalRequest].filter(Boolean).join("\n"),
+          addons: {
+            greeting_card: additionalItems.wishCard,
+            stick_card: additionalItems.stickCard,
+          },
+          paymentMethod: "TRANSFER",
+        }),
+      });
+
+      if (!orderRes.ok) {
+        throw new Error("Gagal membuat pesanan");
+      }
+
+      const order = await orderRes.json();
+      const seed = `${new Date().toISOString().slice(0, 10)}-${order.orderNumber}`;
+      const hash = Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+      const uniqueCode = (hash % 58) + 1;
+      const uniqueCodeLabel = String(uniqueCode).padStart(3, "0");
+
+      router.push(`/payment?amount=${orderTotal}&uniqueCode=${uniqueCodeLabel}&orderRef=${encodeURIComponent(order.orderNumber)}&orderId=${order.id}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&status=PENDING`);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Maaf, pesanan belum bisa dibuat. Silakan coba lagi.");
+    }
   };
 
   return (

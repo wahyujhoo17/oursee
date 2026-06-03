@@ -58,6 +58,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       label: "Pengeluaran",
     },
     {
+      key: "/fn-admin/pembukuan",
+      icon: <DollarOutlined />,
+      label: "Pembukuan",
+    },
+    {
       key: "/fn-admin/calendar",
       icon: <CalendarOutlined />,
       label: "Calendar",

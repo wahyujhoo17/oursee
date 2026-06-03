@@ -143,22 +143,15 @@ export default function CreateOrderPage() {
       const customerId = customerData.id;
 
       // Generate pickup code (OS-XXXX format)
-      const pickupCodeNumber = Math.floor(Math.random() * 10000).toString().padStart(2, '0');
+      const pickupCodeNumber = Math.floor(Math.random() * 10000)
+        .toString()
+        .padStart(2, "0");
       const pickupCode = `OS-${pickupCodeNumber}`;
 
       // Build notes with add-ons and additional notes
-      const addonsText = [
-        `Pickup Code: ${pickupCode}`,
-        `Greeting Card: ${values.greetingCard ? "ya" : "tidak"}`,
-        `Stick Card: ${values.stickCard ? "ya" : "tidak"}`,
-      ].join("\n");
+      const addonsText = [`Pickup Code: ${pickupCode}`, `Greeting Card: ${values.greetingCard ? "ya" : "tidak"}`, `Stick Card: ${values.stickCard ? "ya" : "tidak"}`].join("\n");
 
-      const notes = [
-        addonsText,
-        values.additionalNotes ? `Keterangan Tambahan: ${values.additionalNotes}` : "",
-      ]
-        .filter(Boolean)
-        .join("\n\n");
+      const notes = [addonsText, values.additionalNotes ? `Keterangan Tambahan: ${values.additionalNotes}` : ""].filter(Boolean).join("\n\n");
 
       // Calculate totals
       const itemsTotal = getTotalAmount();
@@ -231,15 +224,7 @@ export default function CreateOrderPage() {
     {
       title: "Aksi",
       key: "action",
-      render: (_: any, record: OrderItem) => (
-        <Button 
-          type="text" 
-          danger 
-          icon={<DeleteOutlined />} 
-          onClick={() => removeItem(record.productId)}
-          size="small"
-        />
-      ),
+      render: (_: any, record: OrderItem) => <Button type="text" danger icon={<DeleteOutlined />} onClick={() => removeItem(record.productId)} size="small" />,
     },
   ];
 
@@ -320,8 +305,8 @@ export default function CreateOrderPage() {
                       size="large"
                       className="rounded-lg"
                       options={[
-                        { label: "🏪 Ambil di Tempat (Pickup)", value: "PICKUP" },
-                        { label: "🚚 Diantar (Delivery)", value: "DELIVERY" },
+                        { label: "Ambil di Tempat (Pickup)", value: "PICKUP" },
+                        { label: "Diantar (Delivery)", value: "DELIVERY" },
                       ]}
                     />
                   </Form.Item>
@@ -398,15 +383,15 @@ export default function CreateOrderPage() {
                 </div>
 
                 <Form.Item>
-                  <Button 
-                    type="primary" 
-                    htmlType="submit" 
+                  <Button
+                    type="primary"
+                    htmlType="submit"
                     loading={loading}
                     size="large"
                     className="rounded-lg border-0 font-semibold h-12 w-full sm:w-auto"
                     style={{
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                      color: '#ffffff'
+                      background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
+                      color: "#ffffff",
                     }}
                   >
                     Buat Pesanan
@@ -416,125 +401,111 @@ export default function CreateOrderPage() {
             </div>
           </Col>
 
-        <Col xs={24} lg={8}>
-          {/* Tambah Item Card */}
-          <div className="rounded-2xl bg-white p-6 shadow-md border border-slate-200 mb-6">
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-slate-900">Pilih Produk</h3>
-              <p className="text-sm text-slate-600 mt-1">Tambahkan item ke pesanan</p>
-            </div>
-
-            <Space orientation="vertical" style={{ width: "100%" }}>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Produk</label>
-                <Select
-                  placeholder="Pilih produk..."
-                  value={selectedProduct?.id}
-                  onChange={(value) => {
-                    const product = products.find((p) => p.id === value);
-                    setSelectedProduct(product || null);
-                  }}
-                  size="large"
-                  className="rounded-lg w-full"
-                  options={products.map((p) => ({
-                    label: `${p.name} • Rp ${p.price.toLocaleString()}`,
-                    value: p.id,
-                  }))}
-                />
+          <Col xs={24} lg={8}>
+            {/* Tambah Item Card */}
+            <div className="rounded-2xl bg-white p-6 shadow-md border border-slate-200 mb-6">
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-slate-900">Pilih Produk</h3>
+                <p className="text-sm text-slate-600 mt-1">Tambahkan item ke pesanan</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Jumlah</label>
-                <InputNumber 
-                  min={1} 
-                  value={quantity} 
-                  onChange={(val) => setQuantity(val || 1)} 
-                  placeholder="Jumlah" 
-                  size="large"
-                  style={{ width: "100%" }} 
-                  className="rounded-lg"
-                />
-              </div>
-
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />} 
-                onClick={addItemToOrder} 
-                block
-                size="large"
-                className="rounded-lg border-0 font-semibold h-11"
-                style={{
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                  color: '#ffffff'
-                }}
-              >
-                Tambah Item
-              </Button>
-            </Space>
-          </div>
-
-          {/* Ringkasan Pesanan Card */}
-          <div className="rounded-2xl bg-linear-to-br from-blue-50 to-indigo-50 p-6 border border-blue-200">
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-slate-900">Ringkasan Pesanan</h3>
-            </div>
-
-            <Space orientation="vertical" style={{ width: "100%" }} size="large">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-600">Total Item</p>
-                <p className="text-2xl font-bold text-blue-600">{orderItems.length}</p>
-              </div>
-
-              <div className="border-t border-blue-200"></div>
-
-              {/* Breakdown */}
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <p className="text-slate-600">Subtotal Produk</p>
-                  <p className="font-medium text-slate-700">Rp {getTotalAmount().toLocaleString()}</p>
+              <Space orientation="vertical" style={{ width: "100%" }}>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Produk</label>
+                  <Select
+                    placeholder="Pilih produk..."
+                    value={selectedProduct?.id}
+                    onChange={(value) => {
+                      const product = products.find((p) => p.id === value);
+                      setSelectedProduct(product || null);
+                    }}
+                    size="large"
+                    className="rounded-lg w-full"
+                    options={products.map((p) => ({
+                      label: `${p.name} • Rp ${p.price.toLocaleString()}`,
+                      value: p.id,
+                    }))}
+                  />
                 </div>
-                {greetingCard && (
-                  <div className="flex items-center justify-between">
-                    <p className="text-slate-600">Greeting Card</p>
-                    <p className="font-medium text-slate-700">+Rp 5.000</p>
-                  </div>
-                )}
-                {stickCard && (
-                  <div className="flex items-center justify-between">
-                    <p className="text-slate-600">Stick Card</p>
-                    <p className="font-medium text-slate-700">+Rp 5.000</p>
-                  </div>
-                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Jumlah</label>
+                  <InputNumber min={1} value={quantity} onChange={(val) => setQuantity(val || 1)} placeholder="Jumlah" size="large" style={{ width: "100%" }} className="rounded-lg" />
+                </div>
+
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={addItemToOrder}
+                  block
+                  size="large"
+                  className="rounded-lg border-0 font-semibold h-11"
+                  style={{
+                    background: "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
+                    color: "#ffffff",
+                  }}
+                >
+                  Tambah Item
+                </Button>
+              </Space>
+            </div>
+
+            {/* Ringkasan Pesanan Card */}
+            <div className="rounded-2xl bg-linear-to-br from-blue-50 to-indigo-50 p-6 border border-blue-200">
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-slate-900">Ringkasan Pesanan</h3>
               </div>
 
-              <div className="border-t border-blue-200"></div>
+              <Space orientation="vertical" style={{ width: "100%" }} size="large">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-slate-600">Total Item</p>
+                  <p className="text-2xl font-bold text-blue-600">{orderItems.length}</p>
+                </div>
 
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-600">Total Harga</p>
-              </div>
-              <p className="text-3xl font-bold text-blue-600">Rp {(getTotalAmount() + getAddOnsCost(greetingCard, stickCard)).toLocaleString()}</p>
-            </Space>
+                <div className="border-t border-blue-200"></div>
+
+                {/* Breakdown */}
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <p className="text-slate-600">Subtotal Produk</p>
+                    <p className="font-medium text-slate-700">Rp {getTotalAmount().toLocaleString()}</p>
+                  </div>
+                  {greetingCard && (
+                    <div className="flex items-center justify-between">
+                      <p className="text-slate-600">Greeting Card</p>
+                      <p className="font-medium text-slate-700">+Rp 5.000</p>
+                    </div>
+                  )}
+                  {stickCard && (
+                    <div className="flex items-center justify-between">
+                      <p className="text-slate-600">Stick Card</p>
+                      <p className="font-medium text-slate-700">+Rp 5.000</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t border-blue-200"></div>
+
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-slate-600">Total Harga</p>
+                </div>
+                <p className="text-3xl font-bold text-blue-600">Rp {(getTotalAmount() + getAddOnsCost(greetingCard, stickCard)).toLocaleString()}</p>
+              </Space>
+            </div>
+          </Col>
+        </Row>
+
+        {/* Item Table Card */}
+        <div className="rounded-2xl bg-white p-8 shadow-md border border-slate-200 mt-8">
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-slate-900">Daftar Item Pesanan</h3>
+            <p className="text-sm text-slate-600 mt-2">Produk yang telah ditambahkan ke pesanan</p>
           </div>
-        </Col>
-      </Row>
 
-      {/* Item Table Card */}
-      <div className="rounded-2xl bg-white p-8 shadow-md border border-slate-200 mt-8">
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-slate-900">Daftar Item Pesanan</h3>
-          <p className="text-sm text-slate-600 mt-2">Produk yang telah ditambahkan ke pesanan</p>
+          <div className="rounded-xl border border-slate-200 overflow-hidden">
+            <Table columns={itemColumns} dataSource={orderItems} rowKey="key" pagination={false} className="bg-white" />
+          </div>
         </div>
-
-        <div className="rounded-xl border border-slate-200 overflow-hidden">
-          <Table 
-            columns={itemColumns} 
-            dataSource={orderItems} 
-            rowKey="key" 
-            pagination={false}
-            className="bg-white"
-          />
-        </div>
-      </div>
       </div>
     </div>
   );

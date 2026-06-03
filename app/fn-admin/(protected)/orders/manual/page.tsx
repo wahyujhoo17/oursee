@@ -9,6 +9,28 @@ import dayjs from "dayjs";
 const GREETING_CARD_PRICE = 5000;
 const STICK_CARD_PRICE = 5000;
 
+const shippingOptions = [
+  {
+    key: "PICKUP",
+    label: "Ambil Sendiri",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    ),
+  },
+  {
+    key: "GOSEND",
+    label: "Gosend Pelanggan",
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 15V7a1 1 0 011-1h8a1 1 0 011 1v8m0 0h2m-2 0H9m10 0h2v-3l-2-4h-6" />
+      </svg>
+    ),
+  },
+];
+
 export default function ManualOrderPage() {
   const router = useRouter();
   const [form] = Form.useForm();
@@ -81,7 +103,7 @@ export default function ManualOrderPage() {
       });
 
       if (res.ok) {
-        message.success("Pesanan manual berhasil disimpan! 🌸");
+        message.success("Pesanan manual berhasil disimpan!");
         setTimeout(() => router.push("/fn-admin/orders"), 1200);
       } else {
         message.error("Gagal menyimpan pesanan");
@@ -95,26 +117,48 @@ export default function ManualOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-pink-50 via-rose-50 to-fuchsia-50 px-4 sm:px-6 lg:px-8 py-10">
-      <div className="mx-auto max-w-2xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-rose-800">💐 Form Pemesanan Manual</h1>
-          <p className="mt-1 text-sm text-rose-500">Isi data pesanan yang masuk melalui WhatsApp atau langsung di toko</p>
-        </div>
-
-        {/* Card */}
-        <div className="rounded-3xl bg-white shadow-xl border border-rose-100 overflow-hidden">
-          {/* Pink top banner */}
-          <div className="bg-linear-to-r from-rose-400 to-fuchsia-400 px-8 py-5 flex items-center gap-3">
-            <span className="text-2xl">💐</span>
-            <div>
-              <p className="text-white font-bold text-lg leading-tight">Silakan isi form pemesanan berikut ya, kak</p>
-              <p className="text-rose-100 text-xs mt-0.5">Semua field wajib diisi kecuali yang opsional</p>
-            </div>
+    <div className="min-h-screen bg-[#f5f7ff] px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
+          <div className="px-6 pt-6 pb-4 border-b border-slate-100 relative">
+            <p className="text-center text-gray-800 text-sm font-semibold">Pemesanan Manual</p>
+            <p className="text-center text-gray-500 text-xs mt-1">Isi data pesanan langsung dari admin, dengan tampilan serupa checkout pelanggan.</p>
           </div>
 
-          <div className="px-8 py-8">
+          <div className="px-6 py-5 space-y-4">
+            <div className="overflow-hidden rounded-2xl border p-4" style={{ borderColor: "#d9e2ff", background: "linear-gradient(135deg, #f6f9ff 0%, #ffffff 60%)" }}>
+              <div className="flex items-center gap-3">
+                <div className="w-16 h-16 rounded-xl border border-[#d9e2ff] bg-white shrink-0 shadow-sm flex items-center justify-center text-2xl text-[#162E93]">B</div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: "#5169b9" }}>
+                    Detail Pesanan
+                  </p>
+                  <p className="font-bold text-gray-900 leading-tight">Pemesanan manual florist</p>
+                  <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold mt-1" style={{ color: "#162E93", backgroundColor: "#e9efff" }}>
+                    Rp {(bouquetPrice || 0).toLocaleString("id-ID")}
+                  </span>
+                </div>
+                <span className="inline-flex items-center rounded-full bg-white border border-[#d9e2ff] px-2.5 py-0.5 text-xs font-medium text-gray-600 shrink-0 self-start">1 item</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border px-4 py-3" style={{ borderColor: "#d9e2ff", backgroundColor: "#fcfdff" }}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">Alur Pemesanan</p>
+                  <p className="text-xs text-gray-500 mt-1">Isi data di bawah, lalu simpan pesanan untuk masuk ke dashboard admin.</p>
+                </div>
+                <span className="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-bold text-white shrink-0" style={{ backgroundColor: "#162E93" }}>
+                  Admin
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] text-gray-600">
+                <div className="rounded-lg border border-[#d9e2ff] bg-white px-2 py-1.5 text-center">Isi Form</div>
+                <div className="rounded-lg border border-[#d9e2ff] bg-white px-2 py-1.5 text-center">Cek Total</div>
+                <div className="rounded-lg border border-[#d9e2ff] bg-white px-2 py-1.5 text-center">Simpan</div>
+              </div>
+            </div>
+
             <Form
               form={form}
               layout="vertical"
@@ -126,204 +170,134 @@ export default function ManualOrderPage() {
               }}
               autoComplete="off"
             >
-              {/* ── 1. Nama Pemesan ── */}
-              <div className="flex items-start gap-3 mb-1">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-xs font-bold text-rose-600">1</span>
-                <Form.Item className="flex-1 mb-4" label={<span className="font-semibold text-slate-700">Nama Pemesan</span>} name="customerName" rules={[{ required: true, message: "Masukkan nama pemesan" }]}>
-                  <Input placeholder="Contoh: Anisa Rahma" size="large" className="rounded-xl" />
-                </Form.Item>
-              </div>
-
-              {/* ── No. Telepon (needed to create customer) ── */}
-              <div className="flex items-start gap-3 mb-1 pl-9">
-                <Form.Item className="flex-1 mb-4" label={<span className="font-semibold text-slate-700">No. Telepon / WhatsApp</span>} name="customerPhone" rules={[{ required: true, message: "Masukkan nomor telepon" }]}>
-                  <Input placeholder="Contoh: 08123456789" size="large" className="rounded-xl" />
-                </Form.Item>
-              </div>
-
-              <Divider className="my-4 border-rose-100" />
-
-              {/* ── 2. Jenis Buket + Harga ── */}
-              <div className="flex items-start gap-3 mb-1">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-xs font-bold text-rose-600">2</span>
-                <div className="flex-1">
-                  <Form.Item className="mb-4" label={<span className="font-semibold text-slate-700">Jenis Buket Bunga</span>} name="bouquetType" rules={[{ required: true, message: "Masukkan jenis buket" }]}>
-                    <Input.TextArea placeholder="Deskripsikan jenis buket yang dipesan (contoh: buket mawar merah premium, bouquet dried flower, dll)" rows={3} className="rounded-xl" />
-                  </Form.Item>
-
-                  <Form.Item className="mb-4" label={<span className="font-semibold text-slate-700">Harga Buket (Rp)</span>} name="bouquetPrice" rules={[{ required: true, message: "Masukkan harga buket" }]}>
-                    <InputNumber
-                      placeholder="Contoh: 150000"
-                      size="large"
-                      min={0}
-                      step={1000}
-                      style={{ width: "100%" }}
-                      className="rounded-xl"
-                      formatter={(v) => (v ? `Rp ${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "")}
-                      parser={(v) => v!.replace(/Rp\s?|[.]/g, "") as any}
-                    />
-                  </Form.Item>
-                  <p className="text-xs text-slate-400 -mt-3 mb-2">💡 Lampirkan foto referensi buket ke customer setelah mengisi form ini</p>
-                </div>
-              </div>
-
-              <Divider className="my-4 border-rose-100" />
-
-              {/* ── 3. Metode Pengambilan ── */}
-              <div className="flex items-start gap-3 mb-1">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-xs font-bold text-rose-600">3</span>
-                <Form.Item
-                  className="flex-1 mb-4"
-                  label={<span className="font-semibold text-slate-700">Metode Pengambilan</span>}
-                  name="deliveryMethod"
-                  initialValue="PICKUP"
-                  rules={[{ required: true, message: "Pilih metode pengambilan" }]}
-                >
-                  <Select
-                    size="large"
-                    className="rounded-xl"
-                    options={[
-                      {
-                        label: "🏪 Self Pickup — Ambil Sendiri",
-                        value: "PICKUP",
-                      },
-                      {
-                        label: "🛵 Gosend — Customer yang Pesan",
-                        value: "GOSEND",
-                      },
-                    ]}
-                  />
-                </Form.Item>
-              </div>
-
-              <Divider className="my-4 border-rose-100" />
-
-              {/* ── 4. Tanggal & Jam Pengambilan ── */}
-              <div className="flex items-start gap-3 mb-1">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-xs font-bold text-rose-600">4</span>
-                <div className="flex-1">
-                  <p className="font-semibold text-slate-700 mb-3">Tanggal &amp; Jam Pengambilan</p>
-                  <div className="flex gap-3">
-                    <Form.Item
-                      className="flex-1 mb-4"
-                      name="pickupDate"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Pilih tanggal pengambilan",
-                        },
-                      ]}
-                    >
-                      <DatePicker placeholder="Pilih tanggal" size="large" style={{ width: "100%" }} className="rounded-xl" disabledDate={(d) => d.isBefore(dayjs().startOf("day"))} />
+              <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+                <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Pemesan</label>
+                    <Form.Item className="mb-0" name="customerName" rules={[{ required: true, message: "Masukkan nama pemesan" }]}>
+                      <Input placeholder="Contoh: Anisa Rahma" size="large" className="rounded-xl" />
                     </Form.Item>
-                    <Form.Item className="flex-1 mb-4" name="pickupTime" rules={[{ required: true, message: "Pilih jam pengambilan" }]}>
-                      <TimePicker placeholder="Pilih jam" format="HH:mm" size="large" style={{ width: "100%" }} className="rounded-xl" minuteStep={15} />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">No. Telepon / WhatsApp</label>
+                    <Form.Item className="mb-0" name="customerPhone" rules={[{ required: true, message: "Masukkan nomor telepon" }]}>
+                      <Input placeholder="Contoh: 08123456789" size="large" className="rounded-xl" />
+                    </Form.Item>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Jenis Buket Bunga</label>
+                    <Form.Item className="mb-0" name="bouquetType" rules={[{ required: true, message: "Masukkan jenis buket" }]}>
+                      <Input.TextArea rows={3} placeholder="Contoh: buket mawar merah premium, dried flower, dll" className="rounded-xl" />
+                    </Form.Item>
+                  </div>
+
+                  <div className="w-full">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Harga Buket (Rp)</label>
+                    <Form.Item className="mb-0" name="bouquetPrice" rules={[{ required: true, message: "Masukkan harga buket" }]}>
+                      <InputNumber
+                        placeholder="Contoh: 150000"
+                        min={0}
+                        step={1000}
+                        size="large"
+                        className="rounded-xl"
+                        style={{ width: "100%", minWidth: "100%", height: 56, fontSize: 18 }}
+                        formatter={(value?: string | number) => (value ? `Rp ${String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}` : "")}
+                        parser={(value?: string): number => Number(value?.replace(/Rp\s?|[.]/g, "") || 0)}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Metode Pengambilan</label>
+                    <Form.Item className="mb-0" name="deliveryMethod" initialValue="PICKUP" rules={[{ required: true, message: "Pilih metode pengambilan" }]}>
+                      <Select size="large" className="rounded-xl" options={shippingOptions.map((item) => ({ label: item.label, value: item.key }))} />
+                    </Form.Item>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Tanggal & Jam Pengambilan</label>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Form.Item className="mb-0" name="pickupDate" rules={[{ required: true, message: "Pilih tanggal pengambilan" }]}>
+                        <DatePicker placeholder="Tanggal" size="large" className="w-full rounded-xl" disabledDate={(d) => d.isBefore(dayjs().startOf("day"))} />
+                      </Form.Item>
+                      <Form.Item className="mb-0" name="pickupTime" rules={[{ required: true, message: "Pilih jam pengambilan" }]}>
+                        <TimePicker placeholder="Jam" format="HH:mm" size="large" className="w-full rounded-xl" minuteStep={15} />
+                      </Form.Item>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Pesan di Kartu Ucapan</label>
+                    <Form.Item className="mb-0" name="cardMessage">
+                      <Input.TextArea rows={3} placeholder="Contoh: Happy Birthday Kakak!" className="rounded-xl" />
                     </Form.Item>
                   </div>
                 </div>
               </div>
 
-              <Divider className="my-4 border-rose-100" />
-
-              {/* ── 5. Pesan Kartu Ucapan ── */}
-              <div className="flex items-start gap-3 mb-1">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rose-100 text-xs font-bold text-rose-600">5</span>
-                <Form.Item
-                  className="flex-1 mb-4"
-                  label={
-                    <span className="font-semibold text-slate-700">
-                      Pesan di Kartu Ucapan <span className="text-slate-400 font-normal text-xs">(Tulis Tangan)</span>
-                    </span>
-                  }
-                  name="cardMessage"
-                >
-                  <Input.TextArea placeholder="Contoh: Happy Birthday Kakak! Semoga selalu sehat dan bahagia 🎂" rows={3} className="rounded-xl" />
-                </Form.Item>
-              </div>
-
-              <Divider className="my-4 border-rose-100" />
-
-              {/* ── Add-ons ── */}
-              <div className="mb-6">
-                <p className="font-semibold text-slate-700 mb-3">
-                  ✨ Add-On <span className="text-slate-400 font-normal text-xs">(Opsional, centang jika ingin ditambahkan)</span>
+              <div className="mt-4 rounded-2xl border border-[#d9e2ff] bg-[#f7faff] p-4">
+                <p className="text-sm font-bold text-center mb-3" style={{ color: "#162E93" }}>
+                  Item Tambahan (Opsional)
                 </p>
-
-                <div className="rounded-2xl border border-rose-100 bg-rose-50 p-5 space-y-4">
-                  <Form.Item name="greetingCard" valuePropName="checked" initialValue={false} className="mb-0">
-                    <Checkbox onChange={(e) => setGreetingCard(e.target.checked)}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🎴</span>
-                        <div>
-                          <p className="font-semibold text-slate-800 leading-tight">Kartu Ucapan Cetak</p>
-                          <p className="text-xs text-slate-500">+Rp 5.000 — kartu ucapan dicetak dengan desain khusus</p>
-                        </div>
-                      </div>
-                    </Checkbox>
-                  </Form.Item>
-
-                  <Form.Item name="stickCard" valuePropName="checked" initialValue={false} className="mb-0">
-                    <Checkbox onChange={(e) => setStickCard(e.target.checked)}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🏷️</span>
-                        <div>
-                          <p className="font-semibold text-slate-800 leading-tight">Stick Card</p>
-                          <p className="text-xs text-slate-500">+Rp 5.000 — kartu kecil untuk ditempelkan pada bunga</p>
-                        </div>
-                      </div>
-                    </Checkbox>
-                  </Form.Item>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-[#d9e2ff] bg-white px-3 py-3">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">Kartu Ucapan</p>
+                      <p className="text-xs text-gray-500">+Rp 5.000</p>
+                    </div>
+                    <Form.Item name="greetingCard" valuePropName="checked" initialValue={false} className="mb-0">
+                      <Checkbox onChange={(e) => setGreetingCard(e.target.checked)}>Tambah</Checkbox>
+                    </Form.Item>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-[#d9e2ff] bg-white px-3 py-3">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">Stick Card</p>
+                      <p className="text-xs text-gray-500">+Rp 5.000</p>
+                    </div>
+                    <Form.Item name="stickCard" valuePropName="checked" initialValue={false} className="mb-0">
+                      <Checkbox onChange={(e) => setStickCard(e.target.checked)}>Tambah</Checkbox>
+                    </Form.Item>
+                  </div>
                 </div>
               </div>
 
-              {/* ── Total ── */}
-              <div className="rounded-2xl bg-linear-to-r from-rose-100 to-fuchsia-100 border border-rose-200 p-5 mb-6">
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between text-slate-600">
+              <div className="mt-4 rounded-2xl border border-dashed border-gray-300 bg-white p-4">
+                <p className="text-sm font-bold text-center mb-3" style={{ color: "#162E93" }}>
+                  Ringkasan Pesanan
+                </p>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex justify-between">
                     <span>Harga Buket</span>
-                    <span className="font-medium">Rp {(bouquetPrice || 0).toLocaleString("id-ID")}</span>
+                    <span className="font-semibold">Rp {(bouquetPrice || 0).toLocaleString("id-ID")}</span>
                   </div>
                   {greetingCard && (
-                    <div className="flex justify-between text-slate-600">
+                    <div className="flex justify-between">
                       <span>Kartu Ucapan Cetak</span>
-                      <span className="font-medium">+Rp 5.000</span>
+                      <span className="font-semibold">+Rp 5.000</span>
                     </div>
                   )}
                   {stickCard && (
-                    <div className="flex justify-between text-slate-600">
+                    <div className="flex justify-between">
                       <span>Stick Card</span>
-                      <span className="font-medium">+Rp 5.000</span>
+                      <span className="font-semibold">+Rp 5.000</span>
                     </div>
                   )}
-                  <div className="border-t border-rose-200 pt-2 flex justify-between items-center">
-                    <span className="font-bold text-rose-700 text-base">Total</span>
-                    <span className="font-bold text-rose-700 text-xl">Rp {getTotal().toLocaleString("id-ID")}</span>
+                  <div className="flex justify-between border-t border-dashed border-gray-300 pt-2 text-base font-bold" style={{ color: "#162E93" }}>
+                    <span>Total</span>
+                    <span>Rp {getTotal().toLocaleString("id-ID")}</span>
                   </div>
                 </div>
               </div>
 
-              {/* ── Submit ── */}
-              <Form.Item className="mb-0">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  icon={<SendOutlined />}
-                  size="large"
-                  block
-                  style={{
-                    background: "linear-gradient(135deg, #f43f5e 0%, #a855f7 100%)",
-                    border: "none",
-                    height: 52,
-                    borderRadius: 16,
-                    fontSize: 16,
-                    fontWeight: 700,
-                    letterSpacing: 0.3,
-                  }}
-                >
+              <div className="mt-4">
+                <Button type="primary" htmlType="submit" loading={loading} icon={<SendOutlined />} size="large" block style={{ backgroundColor: "#162E93", borderColor: "#162E93", borderRadius: 14, height: 48, fontWeight: 700 }}>
                   Simpan Pesanan
                 </Button>
-              </Form.Item>
+              </div>
             </Form>
           </div>
         </div>
