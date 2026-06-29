@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const searchParams = useSearchParams();
 
   const amount = Number(searchParams.get("amount") || 0);
@@ -117,5 +117,21 @@ export default function PaymentPage() {
         </aside>
       </section>
     </main>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-[#f4f7ff] px-4 py-8 md:px-6 lg:px-8">
+          <section className="mx-auto flex w-full max-w-6xl items-center justify-center rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#162E93]">Memuat halaman pembayaran…</p>
+          </section>
+        </main>
+      }
+    >
+      <PaymentPageContent />
+    </Suspense>
   );
 }

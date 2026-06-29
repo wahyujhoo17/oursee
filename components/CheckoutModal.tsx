@@ -80,7 +80,6 @@ export default function CheckoutModal({ isOpen, onClose, items }: CheckoutModalP
   };
 
   const handleOrder = async () => {
-    // Cek field yang belum diisi
     const newErrors: { [key: string]: string } = {};
 
     if (!name.trim()) newErrors.name = "Nama harus diisi";
