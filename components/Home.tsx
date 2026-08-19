@@ -50,12 +50,33 @@ export default function Home({ fadeIn }: HomeProps) {
   const [modalImageLoading, setModalImageLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartLoaded, setIsCartLoaded] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const itemsPerPage = 4;
 
   useEffect(() => {
     fetchProducts();
+    try {
+      const savedCart = localStorage.getItem("oursee_cart");
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      }
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+    } finally {
+      setIsCartLoaded(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (isCartLoaded) {
+      try {
+        localStorage.setItem("oursee_cart", JSON.stringify(cartItems));
+      } catch (error) {
+        console.error("Error saving cart to localStorage:", error);
+      }
+    }
+  }, [cartItems, isCartLoaded]);
 
   const fetchProducts = async () => {
     try {
@@ -257,19 +278,19 @@ export default function Home({ fadeIn }: HomeProps) {
     <div className={`font-jakarta bg-white text-gray-900 transition-opacity duration-700 ${fadeIn ? "opacity-100" : "opacity-0"}`}>
       <Navbar cartCount={cartItems.reduce((sum, i) => sum + i.quantity, 0)} onCartOpen={() => setIsCartOpen(true)} />
 
-      <section className="bg-white py-16 md:py-20 min-h-[520px] md:min-h-[620px] relative overflow-hidden flex items-center">
-        {/* LEFT SVG */}
+      <section className="bg-white py-16 md:py-24 min-h-[550px] md:min-h-[660px] relative overflow-hidden flex items-center">
+        {/* LEFT IMAGE */}
         <Image
-          src="/assets/kiri.svg"
+          src="/malam2-fanny-kiri.webp"
           alt="left decoration"
-          width={360}
-          height={360}
+          width={500}
+          height={750}
           className="
       block 
       absolute 
-      left-2 md:left-10
-      bottom-10 md:bottom-20
-      w-28 md:w-[280px]
+      left-0 md:-left-4
+      bottom-2 md:bottom-6
+      w-40 md:w-[375px]
       h-auto
       opacity-100
       z-0
@@ -278,18 +299,18 @@ export default function Home({ fadeIn }: HomeProps) {
           priority
         />
 
-        {/* RIGHT SVG */}
+        {/* RIGHT IMAGE */}
         <Image
-          src="/assets/kanan.svg"
+          src="/fanny-kupu2-kanan.webp"
           alt="right decoration"
-          width={360}
-          height={360}
+          width={500}
+          height={750}
           className="
       block 
       absolute 
-      right-2 md:right-10
-      bottom-10 md:bottom-20
-      w-28 md:w-[280px]
+      right-0 md:-right-4
+      bottom-2 md:bottom-6
+      w-40 md:w-[375px]
       h-auto
       opacity-100
       z-0
@@ -370,7 +391,7 @@ export default function Home({ fadeIn }: HomeProps) {
           </div>
 
           <div className="flex justify-end">
-            <Image src="/assets/hydra.svg" alt="Floral illustration" width={450} height={450} className="w-[450px] md:mr-[-40px]" priority />
+            <Image src="/fanny-jamet2.webp" alt="Floral illustration" width={600} height={600} className="w-[550px] md:w-[600px] md:mr-[-40px] object-contain" priority />
           </div>
         </div>
       </section>
